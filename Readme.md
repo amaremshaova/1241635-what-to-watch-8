@@ -1,7 +1,7 @@
 # Личный проект «Что посмотреть»
 
 * Студент: [Анастасия Маремшаова](https://up.htmlacademy.ru/react/8/user/1241635).
-* Наставник: `Неизвестно`.
+* Наставник: [Rail Sakhaviev](https://htmlacademy.ru/profile/id1331891).
 
 ---
 
