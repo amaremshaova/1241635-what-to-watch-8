@@ -2,15 +2,15 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './components/app/app';
 
-const dataFilm = {
-  NAME_FILM : 'The Grand Budapest Hotel',
-  GENRE_FILM: 'Drama',
-  YEAR_FILM : 2014,
+const filmData = {
+  nameFilm: 'The Grand Budapest Hotel',
+  genreFilm: 'Drama',
+  yearFilm: 2014,
 
 };
 
 ReactDOM.render(
   <React.StrictMode>
-    <App nameFilm = {dataFilm.NAME_FILM} genreFilm = {dataFilm.GENRE_FILM} yearFilm={dataFilm.YEAR_FILM}/>
+    <App name = {filmData.nameFilm} genre = {filmData.genreFilm} year = {filmData.yearFilm}/>
   </React.StrictMode>,
   document.getElementById('root'));
