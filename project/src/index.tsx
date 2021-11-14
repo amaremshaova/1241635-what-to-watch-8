@@ -1,16 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './components/app/app';
-
-const filmData = {
-  nameFilm: 'The Grand Budapest Hotel',
-  genreFilm: 'Drama',
-  yearFilm: 2014,
-
-};
+import { films } from './mocks/films';
+import { myFilms } from './mocks/my-films';
+import {reviews} from './mocks/reviews';
 
 ReactDOM.render(
   <React.StrictMode>
-    <App name = {filmData.nameFilm} genre = {filmData.genreFilm} year = {filmData.yearFilm}/>
+    <App films = {films} myFilms={myFilms} reviews={reviews}/>
   </React.StrictMode>,
   document.getElementById('root'));

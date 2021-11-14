@@ -1,12 +1,12 @@
-import FilmCard from '../film-card/film-card';
+import {Films} from '../../types/films';
+import FilmsList from '../films-list/films-list';
+import Logo from '../logo/logo';
 
 type MainScreenProps = {
-  nameFilm: string,
-  genreFilm: string,
-  yearFilm: number;
+  films: Films
 }
 
-function MainScreen({nameFilm, genreFilm, yearFilm} : MainScreenProps): JSX.Element{
+function MainScreen({films}: MainScreenProps): JSX.Element{
   return (
     <div>
       <section className="film-card">
@@ -17,13 +17,7 @@ function MainScreen({nameFilm, genreFilm, yearFilm} : MainScreenProps): JSX.Elem
         <h1 className="visually-hidden">WTW</h1>
 
         <header className="page-header film-card__head">
-          <div className="logo">
-            <a className="logo__link" href="/">
-              <span className="logo__letter logo__letter--1">W</span>
-              <span className="logo__letter logo__letter--2">T</span>
-              <span className="logo__letter logo__letter--3">W</span>
-            </a>
-          </div>
+          <Logo/>
 
           <ul className="user-block">
             <li className="user-block__item">
@@ -44,10 +38,10 @@ function MainScreen({nameFilm, genreFilm, yearFilm} : MainScreenProps): JSX.Elem
             </div>
 
             <div className="film-card__desc">
-              <h2 className="film-card__title">{nameFilm}</h2>
+              <h2 className="film-card__title">The Grand Budapest Hotel</h2>
               <p className="film-card__meta">
-                <span className="film-card__genre">{genreFilm}</span>
-                <span className="film-card__year">{yearFilm}</span>
+                <span className="film-card__genre">Drama</span>
+                <span className="film-card__year">2014</span>
               </p>
 
               <div className="film-card__buttons">
@@ -92,7 +86,7 @@ function MainScreen({nameFilm, genreFilm, yearFilm} : MainScreenProps): JSX.Elem
               <a href="/" className="catalog__genres-link">Horror</a>
             </li>
             <li className="catalog__genres-item">
-              <a href="/" className="catalog__genres-link">Kids & Family</a>
+              <a href="/" className="catalog__genres-link">Kids  Family</a>
             </li>
             <li className="catalog__genres-item">
               <a href="/" className="catalog__genres-link">Romance</a>
@@ -105,29 +99,7 @@ function MainScreen({nameFilm, genreFilm, yearFilm} : MainScreenProps): JSX.Elem
             </li>
           </ul>
 
-          <div className="catalog__films-list">
-            <FilmCard/>
-            <FilmCard/>
-            <FilmCard/>
-            <FilmCard/>
-            <FilmCard/>
-            <FilmCard/>
-            <FilmCard/>
-            <FilmCard/>
-            <FilmCard/>
-            <FilmCard/>
-            <FilmCard/>
-            <FilmCard/>
-            <FilmCard/>
-            <FilmCard/>
-            <FilmCard/>
-            <FilmCard/>
-            <FilmCard/>
-            <FilmCard/>
-            <FilmCard/>
-            <FilmCard/>
-          </div>
-
+          <FilmsList films={films}/>
           <div className="catalog__more">
             <button className="catalog__button" type="button">Show more</button>
           </div>

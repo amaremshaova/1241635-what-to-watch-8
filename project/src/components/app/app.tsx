@@ -8,27 +8,33 @@ import Player from '../player/player';
 import NotFoundPage from '../not-found-page/not-found-page';
 import PrivateRoute from '../private-route/private-route';
 import {AppRoute, AuthorizationStatus} from '../../const';
+import {Films} from '../../types/films';
+import {Reviews} from '../../types/review';
 
 
 type AppScreenProps = {
-  name: string,
-  genre: string,
-  year: number;
+  films: Films;
+  myFilms: Films;
+  reviews: Reviews;
 }
 
-function App({name, genre, year} : AppScreenProps): JSX.Element {
+function App({films, myFilms, reviews} : AppScreenProps): JSX.Element {
   return (
     <BrowserRouter>
       <Switch>
         <Route exact path={AppRoute.Main}>
-          <MainScreen nameFilm={name} genreFilm={genre} yearFilm={year}/>
+          <MainScreen films={films}/>
         </Route>
         <Route exact path={AppRoute.Login}>
           <SignIn />
         </Route>
-        <Route exact path={AppRoute.AddingReview}>
-          <AddingReview/>
-        </Route>
+        <PrivateRoute
+          exact
+          path={AppRoute.AddingReview}
+          render={() => <AddingReview />}
+          authorizationStatus={AuthorizationStatus.NoAuth}
+        >
+        </PrivateRoute>
         <Route exact path={AppRoute.Film}>
           <Film />
         </Route>
@@ -38,7 +44,7 @@ function App({name, genre, year} : AppScreenProps): JSX.Element {
         <PrivateRoute
           exact
           path={AppRoute.MyList}
-          render={() => <MyList/>}
+          render={() => <MyList myFilms={myFilms}/>}
           authorizationStatus={AuthorizationStatus.NoAuth}
         >
         </PrivateRoute>
