@@ -1,12 +1,40 @@
-import {Films} from '../../types/films';
+
 import FilmsList from '../films-list/films-list';
 import Logo from '../logo/logo';
+import GenresList from '../genres-list/genres-list';
+import {State} from '../../types/state';
+import {Actions} from '../../types/action';
+import {Dispatch} from 'redux';
+import {connect, ConnectedProps} from 'react-redux';
+import {updateGenre, getFilms, updateFilmCards} from '../../store/actions';
 
-type MainScreenProps = {
-  films: Films
-}
 
-function MainScreen({films}: MainScreenProps): JSX.Element{
+const mapStateToProps = ({films, myFilms, reviews, activeGenre, genres, renderedFilmCardsCount}: State) => ({
+  films,
+  myFilms,
+  reviews,
+  activeGenre,
+  genres,
+  renderedFilmCardsCount,
+});
+
+
+const mapDispatchToProps = (dispatch: Dispatch<Actions>) => ({
+  onUpdateGenre(genre : string) {
+    dispatch(updateGenre(genre));
+    dispatch(getFilms(genre));
+  },
+  onUpdateFilmCards(renderedFilmCardsCount: number){
+    dispatch(updateFilmCards(renderedFilmCardsCount));
+  },
+});
+
+const connector = connect(mapStateToProps, mapDispatchToProps);
+
+type PropsFromRedux = ConnectedProps<typeof connector>;
+
+function MainScreen(props: PropsFromRedux): JSX.Element{
+  const {films, genres, activeGenre, renderedFilmCardsCount, onUpdateGenre, onUpdateFilmCards} = props;
   return (
     <div>
       <section className="film-card">
@@ -21,7 +49,7 @@ function MainScreen({films}: MainScreenProps): JSX.Element{
 
           <ul className="user-block">
             <li className="user-block__item">
-              <div className="user-block__avatar">
+              <div className="user-block__avatar" >
                 <img src="img/avatar.jpg" alt="User avatar" width="63" height="63" />
               </div>
             </li>
@@ -66,43 +94,8 @@ function MainScreen({films}: MainScreenProps): JSX.Element{
         <section className="catalog">
           <h2 className="catalog__title visually-hidden">Catalog</h2>
 
-          <ul className="catalog__genres-list">
-            <li className="catalog__genres-item catalog__genres-item--active">
-              <a href="/" className="catalog__genres-link">All genres</a>
-            </li>
-            <li className="catalog__genres-item">
-              <a href="/" className="catalog__genres-link">Comedies</a>
-            </li>
-            <li className="catalog__genres-item">
-              <a href="/" className="catalog__genres-link">Crime</a>
-            </li>
-            <li className="catalog__genres-item">
-              <a href="/" className="catalog__genres-link">Documentary</a>
-            </li>
-            <li className="catalog__genres-item">
-              <a href="/" className="catalog__genres-link">Dramas</a>
-            </li>
-            <li className="catalog__genres-item">
-              <a href="/" className="catalog__genres-link">Horror</a>
-            </li>
-            <li className="catalog__genres-item">
-              <a href="/" className="catalog__genres-link">Kids  Family</a>
-            </li>
-            <li className="catalog__genres-item">
-              <a href="/" className="catalog__genres-link">Romance</a>
-            </li>
-            <li className="catalog__genres-item">
-              <a href="/" className="catalog__genres-link">Sci-Fi</a>
-            </li>
-            <li className="catalog__genres-item">
-              <a href="/" className="catalog__genres-link">Thrillers</a>
-            </li>
-          </ul>
-
-          <FilmsList films={films}/>
-          <div className="catalog__more">
-            <button className="catalog__button" type="button">Show more</button>
-          </div>
+          <GenresList genres={genres} activeGenre={activeGenre} updateGenre={onUpdateGenre}/>
+          <FilmsList films={films} renderedFilmCardsCount={renderedFilmCardsCount} updateFilmCards={onUpdateFilmCards}/>
         </section>
 
         <footer className="page-footer">
@@ -123,4 +116,5 @@ function MainScreen({films}: MainScreenProps): JSX.Element{
   );
 }
 
-export default MainScreen;
+export {MainScreen};
+export default connector(MainScreen);

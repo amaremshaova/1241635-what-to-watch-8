@@ -1,6 +1,10 @@
-import { ReviewType } from '../../types/review';
+import { ReviewType} from '../../types/review';
 
-function Review(review: ReviewType):JSX.Element{
+type ReviewProps = {
+  review : ReviewType
+}
+
+function Review({review}: ReviewProps):JSX.Element{
   return (
     <div className="review">
       <blockquote className="review__quote">

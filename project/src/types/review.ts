@@ -11,4 +11,3 @@ export type ReviewType = {
   date: string,
 };
 
-export type Reviews = ReviewType[];
