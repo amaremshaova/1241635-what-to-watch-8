@@ -18,15 +18,15 @@ export function adaptToClient(film : FilmServer) : Film{
     },
   );
 
-  /*adaptedfilm['poster_image'];
-  adaptedfilm['preview_image'],
-  adaptedfilm['background_image'],
-  adaptedfilm['background_color'],
-  adaptedfilm['video_link'],
-  adaptedfilm['preview_video_link'],
-  adaptedfilm['scores_count'],
-  adaptedfilm['run_time'],
-  adaptedfilm['is_favorite'],*/
+  /*delete adaptedfilm['poster_image'];
+  delete adaptedfilm['preview_image'];
+  delete adaptedfilm['background_image'];
+  delete adaptedfilm['background_color'];
+  delete adaptedfilm['video_link'];
+  delete adaptedfilm['preview_video_link'];
+  delete adaptedfilm['scores_count'];
+  delete adaptedfilm['run_time'];
+  deleteadaptedfilm['is_favorite'];*/
 
   return adaptedfilm;
 }

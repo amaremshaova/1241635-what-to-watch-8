@@ -1,10 +1,9 @@
-import { films } from '../mocks/films';
 import {State} from '../types/state';
 import {ActionType, Actions} from '../types/action';
 import { Film} from '../types/films';
 import { AuthorizationStatus } from '../const';
 
-const getGenres = () => {
+const getGenres = (films : Film[]) => {
   const allGenres = ['All genres'];
   const genres = Array.from(new Set(films.map((film : Film) => film.genre)));
   return allGenres.concat(genres);
@@ -16,7 +15,7 @@ const initialState = {
   films: [],
   myFilms: [],
   reviews: [],
-  genres: getGenres(),
+  genres: [],
   authorizationStatus: AuthorizationStatus.Unknown,
   isDataLoaded: false,
 };
@@ -24,19 +23,9 @@ const initialState = {
 const reducer = (state: State = initialState, action: Actions): State => {
   switch (action.type) {
     case ActionType.LoadFilms:
-      return {...state, films: action.films};
+      return {...state, films: action.films, genres: getGenres(action.films)};
     case ActionType.UpdateGenre:
       return {...state, activeGenre: action.genre};
-    case ActionType.GetFilms:
-    {
-      if (action.genre === 'All genres'){
-        return {...state, films: initialState.films};
-      }
-      if (films.length === 0) {
-        return {...state, films: initialState.films.filter((film : Film) => film.genre === action.genre)};
-      }
-      return {...state};
-    }
     case ActionType.RequireAuthorization:{
       return {
         ...state,

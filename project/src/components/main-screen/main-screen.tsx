@@ -95,7 +95,7 @@ function MainScreen(props: PropsFromRedux): JSX.Element{
           <h2 className="catalog__title visually-hidden">Catalog</h2>
 
           <GenresList genres={genres} activeGenre={activeGenre} updateGenre={onUpdateGenre}/>
-          <FilmsList films={films} renderedFilmCardsCount={renderedFilmCardsCount} updateFilmCards={onUpdateFilmCards}/>
+          <FilmsList films={films}  genre= {activeGenre} renderedFilmCardsCount={renderedFilmCardsCount} updateFilmCards={onUpdateFilmCards}/>
         </section>
 
         <footer className="page-footer">
