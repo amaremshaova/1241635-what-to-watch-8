@@ -1,9 +1,8 @@
 import { films } from '../mocks/films';
 import {State} from '../types/state';
 import {ActionType, Actions} from '../types/action';
-import { myFilms } from '../mocks/my-films';
-import { reviews } from '../mocks/reviews';
 import { Film} from '../types/films';
+import { AuthorizationStatus } from '../const';
 
 const getGenres = () => {
   const allGenres = ['All genres'];
@@ -14,14 +13,18 @@ const getGenres = () => {
 const initialState = {
   renderedFilmCardsCount: 8,
   activeGenre: 'All genres',
-  films: films,
-  myFilms: myFilms,
-  reviews: reviews,
+  films: [],
+  myFilms: [],
+  reviews: [],
   genres: getGenres(),
+  authorizationStatus: AuthorizationStatus.Unknown,
+  isDataLoaded: false,
 };
 
 const reducer = (state: State = initialState, action: Actions): State => {
   switch (action.type) {
+    case ActionType.LoadFilms:
+      return {...state, films: action.films};
     case ActionType.UpdateGenre:
       return {...state, activeGenre: action.genre};
     case ActionType.GetFilms:
@@ -29,8 +32,20 @@ const reducer = (state: State = initialState, action: Actions): State => {
       if (action.genre === 'All genres'){
         return {...state, films: initialState.films};
       }
-      return {...state, films: initialState.films.filter((film) => film.genre === action.genre)};
+      if (films.length === 0) {
+        return {...state, films: initialState.films.filter((film : Film) => film.genre === action.genre)};
+      }
+      return {...state};
     }
+    case ActionType.RequireAuthorization:{
+      return {
+        ...state,
+        authorizationStatus: action.payload,
+        isDataLoaded: true,
+      };
+    }
+    case ActionType.RequireLogout:
+      return {...state, authorizationStatus: AuthorizationStatus.NoAuth};
     case ActionType.UpdateFilmCards:
       return {...state, renderedFilmCardsCount: action.renderedFilmCardsCount};
     case ActionType.ResetScreen:

@@ -1,3 +1,4 @@
+
 export enum AppRoute {
   Login = '/login',
   MyList = '/mylist',
@@ -17,3 +18,12 @@ export enum CountFilms{
   Catalog = 8,
   MoreLike = 4
 }
+
+export enum APIRoute {
+  Films = '/films',
+  Login = '/login',
+  Logout = '/logout',
+}
+
+export const isCheckedAuth = (authorizationStatus: AuthorizationStatus): boolean =>
+  authorizationStatus === AuthorizationStatus.Unknown;
