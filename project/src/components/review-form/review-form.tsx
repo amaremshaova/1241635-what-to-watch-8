@@ -1,7 +1,7 @@
 import CommentSubmissionForm from '../comment-submission-form/comment-submission-form';
 import Logo from '../logo/logo';
 
-function AddingReview() :JSX.Element{
+function ReviewForm() :JSX.Element{
   return(
     <div>
       <section className="film-card film-card--full">
@@ -49,4 +49,4 @@ function AddingReview() :JSX.Element{
 }
 
 
-export default AddingReview;
+export default ReviewForm;

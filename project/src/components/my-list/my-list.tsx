@@ -1,10 +1,9 @@
 import { Link } from 'react-router-dom';
-import {Films} from '../../types/films';
-import FilmsList from '../films-list/films-list';
+import {Film} from '../../types/films';
 import Logo from '../logo/logo';
 
 type MyListProps = {
-  myFilms: Films,
+  myFilms: Film[],
 }
 
 function MyList({myFilms} : MyListProps): JSX.Element {
@@ -28,7 +27,6 @@ function MyList({myFilms} : MyListProps): JSX.Element {
 
       <section className="catalog">
         <h2 className="catalog__title visually-hidden">Catalog</h2>
-        <FilmsList films={myFilms}/>
       </section>
 
       <footer className="page-footer">

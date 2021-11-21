@@ -1,6 +1,6 @@
-import {FilmType} from '../types/films';
+import {Film} from '../types/films';
 
-export const myFilms: FilmType[] = [
+export const myFilms: Film[] = [
   {
     id: 7,
     name: 'Revenant',
