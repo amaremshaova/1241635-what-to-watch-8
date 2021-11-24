@@ -1,15 +1,47 @@
 import {ActionType} from '../types/action';
 import { AuthorizationStatus } from '../const';
 import { Film } from '../types/films';
+import { ReviewType } from '../types/review';
 
 export const loadFilms = (data: Film[]) => ({
   type: ActionType.LoadFilms,
   films: data,
 } as const);
 
-export const getFilms = (genre: string) => ({
-  type: ActionType.GetFilms,
-  genre:genre,
+export const getFilm = (data: Film) => ({
+  type: ActionType.GetFilm,
+  activeFilm: data,
+} as const);
+
+export const addFavoriteFilm = (data: Film) => ({
+  type: ActionType.AddFavoriteFilm,
+  favoriteFilm : data,
+} as const);
+
+export const getPromoFilm = (data: Film) => ({
+  type: ActionType.GetPromoFilm,
+  promoFilm: data,
+} as const);
+
+export const getMoreLikeFilms = (data: Film[]) => ({
+  type: ActionType.GetMoreLikeFilms,
+  moreLikeFilms: data,
+} as const);
+
+export const getFavoriteFilms = (data: Film[]) => ({
+  type: ActionType.GetFavoriteFilms,
+  myFilms: data,
+} as const);
+
+export const getReviews = (data: ReviewType[]) => ({
+  type: ActionType.GetReviews,
+  reviews: data,
+} as const);
+
+export const addReview = (data: ReviewType[], status: number) => ({
+  type: ActionType.AddReview,
+  responseStatus: status,
+  reviews: data,
 } as const);
 
 export const updateGenre = (genre: string) => ({

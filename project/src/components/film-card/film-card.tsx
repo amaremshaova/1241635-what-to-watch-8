@@ -8,22 +8,31 @@ import { useState } from 'react';
 
 type FilmCardProps = {
   film: Film,
-  onPlayMouseOver: () => void;
-  onPlayMouseOut: () => void;
 }
 
 
-function FilmCard({film, onPlayMouseOver, onPlayMouseOut}: FilmCardProps): JSX.Element {
+function FilmCard({film}: FilmCardProps): JSX.Element {
   const [isPlaying, setPlaying] = useState(false);
+  let timer : NodeJS.Timeout;
+
+  const onMouseEnter = () => {
+    timer = setTimeout(() => {
+      setPlaying(true);}, 1000);
+  };
+
+  const onMouseLeave = () => {
+    setPlaying(false);
+    clearTimeout(timer);
+  };
 
   const history = useHistory();
   return (
-    <article className="small-film-card catalog__films-card" key={film.id} onClick={() => history.push(AppRoute.Film)} onMouseOver={onPlayMouseOver} onMouseOut={onPlayMouseOut}>
-      <div className="small-film-card__image" onMouseOver={()=> setPlaying(true)} onMouseOut={()=> setPlaying(false)}>
-        <VideoPlayer noSound={false} isPlaying={isPlaying} src={film.previewVideoLink} srcPoster={film.previewImage} />
+    <article className="small-film-card catalog__films-card" key={film.id} onClick={() => {history.push(AppRoute.Film + film.id); }} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+      <div className="small-film-card__image">
+        <VideoPlayer isPlaying={isPlaying} src={film.previewVideoLink} srcPoster={film.previewImage} />
       </div>
       <h3 className="small-film-card__title">
-        <Link className="small-film-card__link" to={AppRoute.Film} onClick={() => history.push(AppRoute.Film)}>{film.name}
+        <Link className="small-film-card__link" to={AppRoute.Film + film.id} onClick={() => history.push(AppRoute.Film)}>{film.name}
         </Link>
       </h3>
     </article>

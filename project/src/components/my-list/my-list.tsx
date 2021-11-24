@@ -1,50 +1,59 @@
-import { Link } from 'react-router-dom';
-import {Film} from '../../types/films';
 import Logo from '../logo/logo';
+import UserAccount from '../user-account/user-account';
+import {State} from '../../types/state';
+import {connect, ConnectedProps} from 'react-redux';
+import FilmsList from '../films-list/films-list';
+import Footer from '../footer/footer';
+import { getFavoriteFilmsAction } from '../../store/api-actions';
+import {ThunkAppDispatch} from '../../types/action';
+import { updateFilmCards } from '../../store/actions';
 
-type MyListProps = {
-  myFilms: Film[],
-}
+const mapStateToProps = ({authorizationStatus, myFilms, renderedFilmCardsCount}: State) => ({
+  authorizationStatus,
+  myFilms,
+  renderedFilmCardsCount,
 
-function MyList({myFilms} : MyListProps): JSX.Element {
+});
+
+const mapDispatchToProps = (dispatch: ThunkAppDispatch) => ({
+  onGetFavoriteFilms(){
+    dispatch(getFavoriteFilmsAction());
+  },
+  onUpdateFilmCards(renderedFilmCardsCount: number){
+    dispatch(updateFilmCards(renderedFilmCardsCount));
+  },
+});
+
+const connector = connect(mapStateToProps, mapDispatchToProps );
+
+type PropsFromRedux = ConnectedProps<typeof connector>;
+
+function MyList(props : PropsFromRedux): JSX.Element {
+  const {authorizationStatus, myFilms, renderedFilmCardsCount, onUpdateFilmCards, onGetFavoriteFilms} = props;
+
+  onGetFavoriteFilms();
+
+  onUpdateFilmCards(myFilms.length);
+
   return(
     <div className="user-page">
       <header className="page-header user-page__head">
         <Logo/>
         <h1 className="page-title user-page__title">My list</h1>
-
-        <ul className="user-block">
-          <li className="user-block__item">
-            <div className="user-block__avatar">
-              <img src="img/avatar.jpg" alt="User avatar" width="63" height="63" />
-            </div>
-          </li>
-          <li className="user-block__item">
-            <Link to="/" className="user-block__link">Sign out</Link>
-          </li>
-        </ul>
+        <UserAccount authorizationStatus={authorizationStatus}/>
       </header>
 
       <section className="catalog">
         <h2 className="catalog__title visually-hidden">Catalog</h2>
+        <FilmsList films={myFilms} renderedFilmCardsCount={renderedFilmCardsCount}/>
       </section>
 
-      <footer className="page-footer">
-        <div className="logo">
-          <a href="main.html" className="logo__link logo__link--light">
-            <span className="logo__letter logo__letter--1">W</span>
-            <span className="logo__letter logo__letter--2">T</span>
-            <span className="logo__letter logo__letter--3">W</span>
-          </a>
-        </div>
-
-        <div className="copyright">
-          <p>© 2019 What to watch Ltd.</p>
-        </div>
-      </footer>
+      <Footer/>
     </div>
   );
 }
 
 
-export default MyList;
+export {MyList};
+
+export default connector(MyList);

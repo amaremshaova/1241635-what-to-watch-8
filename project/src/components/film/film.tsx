@@ -1,67 +1,109 @@
-import { useHistory } from 'react-router';
-import { AppRoute } from '../../const';
+import { useHistory} from 'react-router-dom';
+import { AppRoute, CountFilms} from '../../const';
 import { Link } from 'react-router-dom';
 import Logo from '../logo/logo';
-import {Film} from '../../types/films';
-import { ReviewType } from '../../types/review';
 import Tabs from '../tabs/tabs';
+import Footer from '../footer/footer';
+import UserAccount from '../user-account/user-account';
+import {connect, ConnectedProps} from 'react-redux';
+import { State } from '../../types/state';
+import { getFilmAction, getReviewsAction, getMoreLikeFilmsAction, changeFavoriteFilmsAction } from '../../store/api-actions';
+import {ThunkAppDispatch} from '../../types/action';
+import FilmsList from '../films-list/films-list';
+import { updateFilmCards } from '../../store/actions';
+import { StatusData } from '../../types/status-data';
 
-type FilmProps = {
-  film: Film;
-  filmsSortGenre: Film[];
-  reviews: ReviewType[]
-}
 
-function Film({film,  filmsSortGenre, reviews}: FilmProps) :JSX.Element{
+const mapStateToProps = ({films, reviews, authorizationStatus, activeFilm, moreLikeFilms, renderedFilmCardsCount, myFilms}: State) => ({
+  films,
+  reviews,
+  authorizationStatus,
+  activeFilm,
+  moreLikeFilms,
+  renderedFilmCardsCount,
+});
+
+const mapDispatchToProps = (dispatch: ThunkAppDispatch) => ({
+  onGetFilm(id: number) {
+    dispatch(getFilmAction(id));
+  },
+  onGetReviews(id: number){
+    dispatch(getReviewsAction(id));
+  },
+  onGetMoreLikeFilms(id: number){
+    dispatch(getMoreLikeFilmsAction(id));
+  },
+  onUpdateFilmCards(renderedFilmCardsCount: number){
+    dispatch(updateFilmCards(renderedFilmCardsCount));
+  },
+
+  onChangeFavoriteFilms({id, status}: StatusData){
+    dispatch(changeFavoriteFilmsAction({id, status}));
+  },
+});
+
+
+const connector = connect(mapStateToProps, mapDispatchToProps);
+type PropsFromRedux = ConnectedProps<typeof connector>;
+
+function Film(props: PropsFromRedux) :JSX.Element{
+  const {reviews, authorizationStatus, activeFilm, moreLikeFilms, renderedFilmCardsCount, onGetFilm, onGetReviews, onGetMoreLikeFilms, onUpdateFilmCards, onChangeFavoriteFilms} = props;
   const history = useHistory();
+  const positionFilmId = Number(window.location.pathname.lastIndexOf(':') + 1);
+  const filmId = Number(window.location.pathname.substr(positionFilmId));
+  onGetFilm(filmId);
+  onGetReviews(filmId);
+  onGetMoreLikeFilms(filmId);
+  onUpdateFilmCards(CountFilms.MoreLike);
+
+
+  const handleChangeFavoriteFilms = () =>{
+    const status = activeFilm.isFavorite ? 0 : 1;
+    onChangeFavoriteFilms({id: activeFilm.id, status: status});};
 
   return(
     <div>
       <section className="film-card film-card--full">
         <div className="film-card__hero">
           <div className="film-card__bg">
-            <img src={film.posterImage} alt={film.name} />
+            <img src={activeFilm.posterImage} alt={activeFilm.name} />
           </div>
 
           <h1 className="visually-hidden">WTW</h1>
 
           <header className="page-header film-card__head">
             <Logo/>
-
-            <ul className="user-block">
-              <li className="user-block__item">
-                <div className="user-block__avatar">
-                  <img src="img/avatar.jpg" alt="User avatar" width="63" height="63" />
-                </div>
-              </li>
-              <li className="user-block__item">
-                <a className="user-block__link" href="/">Sign out</a>
-              </li>
-            </ul>
+            <UserAccount authorizationStatus={authorizationStatus}/>
           </header>
 
           <div className="film-card__wrap">
             <div className="film-card__desc">
-              <h2 className="film-card__title">{film.name}</h2>
+              <h2 className="film-card__title">{activeFilm.name}</h2>
               <p className="film-card__meta">
-                <span className="film-card__genre">{film.genre}</span>
-                <span className="film-card__year">{film.released}</span>
+                <span className="film-card__genre">{activeFilm.genre}</span>
+                <span className="film-card__year">{activeFilm.released}</span>
               </p>
 
               <div className="film-card__buttons">
-                <button className="btn btn--play film-card__button" type="button">
+                <button className="btn btn--play film-card__button" type="button" onClick={()=>history.push(AppRoute.Player+activeFilm.id)}>
                   <svg viewBox="0 0 19 19" width="19" height="19">
                     <use href="#play-s"></use>
                   </svg>
                   <span>Play</span>
                 </button>
-                <button className="btn btn--list film-card__button" type="button">
-                  <svg viewBox="0 0 19 20" width="19" height="20">
-                    <use href="#add"></use>
-                  </svg>
+                <button className="btn btn--list film-card__button" type="button" onClick={()=>handleChangeFavoriteFilms()}>
+                  {
+                    activeFilm.isFavorite ?
+                      <svg viewBox="0 0 18 14" width="18" height="14">
+                        <use href="#in-list"></use>
+                      </svg> :
+                      <svg viewBox="0 0 19 20" width="19" height="20">
+                        <use href="#add"></use>
+                      </svg>
+                  }
                   <span>My list</span>
                 </button>
-                <Link to={AppRoute.AddingReview} onClick={() => history.push(AppRoute.AddingReview)} className="btn film-card__button">
+                <Link to={AppRoute.Film + activeFilm.id + AppRoute.AddingReview} onClick={() => history.push(AppRoute.AddingReview)} className="btn film-card__button">
                   Add review
                 </Link>
               </div>
@@ -72,10 +114,10 @@ function Film({film,  filmsSortGenre, reviews}: FilmProps) :JSX.Element{
         <div className="film-card__wrap film-card__translate-top">
           <div className="film-card__info">
             <div className="film-card__poster film-card__poster--big">
-              <img src="img/the-grand-budapest-hotel-poster.jpg" alt="The Grand Budapest Hotel poster" width="218" height="327" />
+              <img src={activeFilm.posterImage} alt={activeFilm.name} width="218" height="327" />
             </div>
 
-            <Tabs film={film} reviews={reviews}/>
+            <Tabs film={activeFilm} reviews={reviews}/>
           </div>
         </div>
       </section>
@@ -83,24 +125,14 @@ function Film({film,  filmsSortGenre, reviews}: FilmProps) :JSX.Element{
       <div className="page-content">
         <section className="catalog catalog--like-this">
           <h2 className="catalog__title">More like this</h2>
+          <FilmsList films = {moreLikeFilms} renderedFilmCardsCount={renderedFilmCardsCount}/>
         </section>
 
-        <footer className="page-footer">
-          <div className="logo">
-            <Link to={AppRoute.Main} onClick={() => history.push(AppRoute.Main)} className="logo__link logo__link--light">
-              <span className="logo__letter logo__letter--1">W</span>
-              <span className="logo__letter logo__letter--2">T</span>
-              <span className="logo__letter logo__letter--3">W</span>
-            </Link>
-          </div>
-
-          <div className="copyright">
-            <p>© 2019 What to watch Ltd.</p>
-          </div>
-        </footer>
+        <Footer/>
       </div>
     </div>
   );
 }
 
-export default Film;
+export {Film};
+export default connector(Film);
