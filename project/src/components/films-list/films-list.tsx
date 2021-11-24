@@ -8,14 +8,13 @@ type FilmsListProps = {
 
 
 function FilmsList({films, renderedFilmCardsCount}: FilmsListProps) :JSX.Element{
+
   return(
-    <div>
-      <div className="catalog__films-list">
-        {
-          films.slice(0, renderedFilmCardsCount).map((film) =>
-            (<FilmCard film = {film} key={film.id} />))
-        }
-      </div>
+    <div className="catalog__films-list">
+      {
+        films.slice(0, renderedFilmCardsCount).map((film) =>
+          (<FilmCard film = {film} key={film.id} />))
+      }
     </div>
   );
 }

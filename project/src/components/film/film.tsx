@@ -1,5 +1,5 @@
 import { useHistory} from 'react-router-dom';
-import { AppRoute, CountFilms} from '../../const';
+import { APIRoute, AuthorizationStatus, CountFilms} from '../../const';
 import { Link } from 'react-router-dom';
 import Logo from '../logo/logo';
 import Tabs from '../tabs/tabs';
@@ -7,7 +7,7 @@ import Footer from '../footer/footer';
 import UserAccount from '../user-account/user-account';
 import {connect, ConnectedProps} from 'react-redux';
 import { State } from '../../types/state';
-import { getFilmAction, getReviewsAction, getMoreLikeFilmsAction, changeFavoriteFilmsAction } from '../../store/api-actions';
+import { getFilmAction, getReviewsAction, getMoreLikeFilmsAction, changeFavoriteFilmsAction, logoutAction} from '../../store/api-actions';
 import {ThunkAppDispatch} from '../../types/action';
 import FilmsList from '../films-list/films-list';
 import { updateFilmCards } from '../../store/actions';
@@ -40,6 +40,9 @@ const mapDispatchToProps = (dispatch: ThunkAppDispatch) => ({
   onChangeFavoriteFilms({id, status}: StatusData){
     dispatch(changeFavoriteFilmsAction({id, status}));
   },
+  logout(){
+    dispatch(logoutAction());
+  },
 });
 
 
@@ -47,7 +50,7 @@ const connector = connect(mapStateToProps, mapDispatchToProps);
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
 function Film(props: PropsFromRedux) :JSX.Element{
-  const {reviews, authorizationStatus, activeFilm, moreLikeFilms, renderedFilmCardsCount, onGetFilm, onGetReviews, onGetMoreLikeFilms, onUpdateFilmCards, onChangeFavoriteFilms} = props;
+  const {reviews, authorizationStatus, activeFilm, moreLikeFilms, renderedFilmCardsCount, onGetFilm, onGetReviews, onGetMoreLikeFilms, onUpdateFilmCards, onChangeFavoriteFilms, logout} = props;
   const history = useHistory();
   const positionFilmId = Number(window.location.pathname.lastIndexOf(':') + 1);
   const filmId = Number(window.location.pathname.substr(positionFilmId));
@@ -63,17 +66,17 @@ function Film(props: PropsFromRedux) :JSX.Element{
 
   return(
     <div>
-      <section className="film-card film-card--full">
+      <section className="film-card film-card--full" style={{backgroundColor:activeFilm.backgroundColor}}>
         <div className="film-card__hero">
           <div className="film-card__bg">
-            <img src={activeFilm.posterImage} alt={activeFilm.name} />
+            <img src={activeFilm.backgroundImage} alt={activeFilm.name} />
           </div>
 
           <h1 className="visually-hidden">WTW</h1>
 
           <header className="page-header film-card__head">
             <Logo/>
-            <UserAccount authorizationStatus={authorizationStatus}/>
+            <UserAccount authorizationStatus={authorizationStatus} logoutAction = {logout}/>
           </header>
 
           <div className="film-card__wrap">
@@ -85,13 +88,13 @@ function Film(props: PropsFromRedux) :JSX.Element{
               </p>
 
               <div className="film-card__buttons">
-                <button className="btn btn--play film-card__button" type="button" onClick={()=>history.push(AppRoute.Player+activeFilm.id)}>
+                <button className="btn btn--play film-card__button" type="button" onClick={()=>history.push(APIRoute.Player+activeFilm.id)}>
                   <svg viewBox="0 0 19 19" width="19" height="19">
                     <use href="#play-s"></use>
                   </svg>
                   <span>Play</span>
                 </button>
-                <button className="btn btn--list film-card__button" type="button" onClick={()=>handleChangeFavoriteFilms()}>
+                <button className="btn btn--list film-card__button" type="button" disabled={(authorizationStatus === AuthorizationStatus.Auth)} onClick={()=>handleChangeFavoriteFilms()}>
                   {
                     activeFilm.isFavorite ?
                       <svg viewBox="0 0 18 14" width="18" height="14">
@@ -103,7 +106,7 @@ function Film(props: PropsFromRedux) :JSX.Element{
                   }
                   <span>My list</span>
                 </button>
-                <Link to={AppRoute.Film + activeFilm.id + AppRoute.AddingReview} onClick={() => history.push(AppRoute.AddingReview)} className="btn film-card__button">
+                <Link to={`${APIRoute.Film}:${activeFilm.id}${APIRoute.Review}`} className="btn film-card__button">
                   Add review
                 </Link>
               </div>

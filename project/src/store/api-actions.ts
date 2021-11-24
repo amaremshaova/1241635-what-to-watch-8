@@ -12,7 +12,7 @@ import { CommentPost } from '../types/review';
 
 export const fetchFilmsAction = (): ThunkActionResult =>
   async (dispatch, _getState, api): Promise<void> => {
-    const {data} = await api.get<FilmServer[]>(APIRoute.Films);
+    const {data} = await api.get<FilmServer[]>(APIRoute.Film);
     dispatch(loadFilms(data.map((film)=> (adaptToClient(film)))));
   };
 
