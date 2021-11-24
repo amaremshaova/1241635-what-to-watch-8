@@ -19,12 +19,14 @@ import {
   requireLogout,
   getMoreLikeFilms,
   getFavoriteFilms,
-  getPromoFilm
+  getPromoFilm,
+  addReview
 } from '../store/actions';
 import { Film } from './films';
 
 
 export enum ActionType {
+  AddReview = 'ADD_REVIEW',
   AddFavoriteFilm = 'ADD_FAVORITE_FILM',
   GetPromoFilm = 'GET_PROMO_FILM',
   GetFavoriteFilms = 'GET_FAVORITE_FILMS',
@@ -41,6 +43,7 @@ export enum ActionType {
 }
 
 export type Actions =
+| ReturnType<typeof addReview>
 | ReturnType<typeof addFavoriteFilm>
 | ReturnType<typeof getPromoFilm>
 | ReturnType<typeof getFavoriteFilms>

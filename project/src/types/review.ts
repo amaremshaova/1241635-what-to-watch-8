@@ -11,3 +11,8 @@ export type ReviewType = {
   date: string,
 };
 
+export type CommentPost = {
+  rating: number,
+  comment: string;
+}
+

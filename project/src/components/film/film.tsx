@@ -56,6 +56,7 @@ function Film(props: PropsFromRedux) :JSX.Element{
   onGetMoreLikeFilms(filmId);
   onUpdateFilmCards(CountFilms.MoreLike);
 
+
   const handleChangeFavoriteFilms = () =>{
     const status = activeFilm.isFavorite ? 0 : 1;
     onChangeFavoriteFilms({id: activeFilm.id, status: status});};
@@ -84,7 +85,7 @@ function Film(props: PropsFromRedux) :JSX.Element{
               </p>
 
               <div className="film-card__buttons">
-                <button className="btn btn--play film-card__button" type="button">
+                <button className="btn btn--play film-card__button" type="button" onClick={()=>history.push(AppRoute.Player+activeFilm.id)}>
                   <svg viewBox="0 0 19 19" width="19" height="19">
                     <use href="#play-s"></use>
                   </svg>
@@ -102,7 +103,7 @@ function Film(props: PropsFromRedux) :JSX.Element{
                   }
                   <span>My list</span>
                 </button>
-                <Link to={AppRoute.AddingReview} onClick={() => history.push(AppRoute.AddingReview)} className="btn film-card__button">
+                <Link to={AppRoute.Film + activeFilm.id + AppRoute.AddingReview} onClick={() => history.push(AppRoute.AddingReview)} className="btn film-card__button">
                   Add review
                 </Link>
               </div>

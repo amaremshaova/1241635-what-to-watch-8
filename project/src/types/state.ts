@@ -13,5 +13,6 @@ export type State = {
   activeFilm: Film,
   myFilms: Film[],
   moreLikeFilms: Film[],
-  promoFilm: Film
+  promoFilm: Film,
+  responseStatus: number,
 };

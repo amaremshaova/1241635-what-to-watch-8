@@ -3,7 +3,6 @@ import MainScreen from '../main-screen/main-screen';
 import SignIn from '../sign-in/sign-in';
 import Player from '../player/player';
 import NotFoundPage from '../not-found-page/not-found-page';
-import PrivateRoute from '../private-route/private-route';
 import {AppRoute} from '../../const';
 import LoadingScreen from '../loading-screen/loading-screen';
 import {connect, ConnectedProps} from 'react-redux';
@@ -11,6 +10,7 @@ import {State} from '../../types/state';
 import { isCheckedAuth } from '../../const';
 import Film from '../film/film';
 import MyList from '../my-list/my-list';
+import ReviewForm from '../review-form-page/review-form-page';
 
 const mapStateToProps = ({authorizationStatus, isDataLoaded}: State) => ({
   authorizationStatus,
@@ -48,13 +48,13 @@ function App(props: PropsFromRedux): JSX.Element {
         >
           <MyList/>
         </Route>
-        <PrivateRoute
+        <Route
           exact
-          path={AppRoute.AddingReview}
-          render={() => <SignIn />}
+          path='/films/:id/review'
         >
-        </PrivateRoute>
-        <Route exact path={AppRoute.Player}>
+          <ReviewForm/>
+        </Route>
+        <Route exact path='/player/:id'>
           <Player />
         </Route>
         <Route>

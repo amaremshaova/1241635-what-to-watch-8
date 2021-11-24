@@ -38,6 +38,12 @@ export const getReviews = (data: ReviewType[]) => ({
   reviews: data,
 } as const);
 
+export const addReview = (data: ReviewType[], status: number) => ({
+  type: ActionType.AddReview,
+  responseStatus: status,
+  reviews: data,
+} as const);
+
 export const updateGenre = (genre: string) => ({
   type: ActionType.UpdateGenre,
   genre: genre,

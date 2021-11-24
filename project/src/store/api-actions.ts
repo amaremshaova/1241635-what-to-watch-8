@@ -1,5 +1,5 @@
 import {ThunkActionResult} from '../types/action';
-import {loadFilms, getFilm, requireAuthorization, requireLogout, getReviews, getMoreLikeFilms, getFavoriteFilms, addFavoriteFilm} from './actions';
+import {loadFilms, getFilm, requireAuthorization, requireLogout, getReviews, getMoreLikeFilms, getFavoriteFilms, addFavoriteFilm, addReview} from './actions';
 import {saveToken, dropToken, Token} from '../services/token';
 import {APIRoute, AuthorizationStatus} from '../const';
 import {FilmServer} from '../types/films';
@@ -8,6 +8,7 @@ import {adaptToClient} from '../adapter';
 import { ReviewType } from '../types/review';
 import { getPromoFilm } from './actions';
 import { StatusData } from '../types/status-data';
+import { CommentPost } from '../types/review';
 
 export const fetchFilmsAction = (): ThunkActionResult =>
   async (dispatch, _getState, api): Promise<void> => {
@@ -43,6 +44,12 @@ export const getReviewsAction = (id: number): ThunkActionResult =>
   async (dispatch, _getState, api) => {
     const {data} = await api.get<ReviewType[]>(APIRoute.Reviews+id);
     dispatch(getReviews(data));
+  };
+
+export const addReviewAction = (id: number,  {rating, comment} : CommentPost): ThunkActionResult =>
+  async (dispatch, _getState, api) => {
+    const {data, status} = await api.post<ReviewType[]>(APIRoute.Reviews+id, {rating, comment});
+    dispatch(addReview(data, status));
   };
 
 export const checkAuthAction = (): ThunkActionResult =>

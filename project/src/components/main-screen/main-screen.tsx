@@ -10,10 +10,11 @@ import {updateGenre, updateFilmCards} from '../../store/actions';
 import UserAccount from '../user-account/user-account';
 import Footer from '../footer/footer';
 import ShowMoreButton from '../show-more-button/show-more-button';
-import { CountFilms } from '../../const';
+import { AppRoute, CountFilms } from '../../const';
 import { getPromoFilmAction, changeFavoriteFilmsAction } from '../../store/api-actions';
 import { ThunkAppDispatch } from '../../types/action';
 import { StatusData } from '../../types/status-data';
+import { useHistory } from 'react-router';
 
 
 const mapStateToProps = ({films, reviews, activeGenre, genres,
@@ -54,6 +55,8 @@ type PropsFromRedux = ConnectedProps<typeof connector>;
 function MainScreen(props: PropsFromRedux): JSX.Element{
   const {films, genres, activeGenre, renderedFilmCardsCount, authorizationStatus, promoFilm, onUpdateGenre, onUpdateFilmCards, onUpdatePromoFilm, onChangeFavoriteFilms} = props;
 
+
+  const history = useHistory();
 
   let filteredFilms = [];
   if (activeGenre === 'All genres'){
@@ -100,7 +103,7 @@ function MainScreen(props: PropsFromRedux): JSX.Element{
               </p>
 
               <div className="film-card__buttons">
-                <button className="btn btn--play film-card__button" type="button">
+                <button className="btn btn--play film-card__button" type="button" onClick={()=>history.push(AppRoute.Player+promoFilm.id)}>
                   <svg viewBox="0 0 19 19" width="19" height="19">
                     <use href="#play-s"></use>
                   </svg>

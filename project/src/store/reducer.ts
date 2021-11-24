@@ -42,6 +42,7 @@ const initialState = {
   myFilms: [],
   moreLikeFilms:[],
   promoFilm: initialFilm,
+  responseStatus: 200,
 };
 
 const reducer = (state: State = initialState, action: Actions): State  => {
@@ -50,6 +51,8 @@ const reducer = (state: State = initialState, action: Actions): State  => {
       return {...state, films: action.films, genres: getGenres(action.films)};
     case ActionType.GetReviews:
       return {...state, reviews: action.reviews};
+    case ActionType.AddReview:
+      return {...state, reviews: action.reviews, responseStatus: action.responseStatus};
     case ActionType.GetMoreLikeFilms:
       return {...state, moreLikeFilms: action.moreLikeFilms};
     case ActionType.GetFavoriteFilms:
