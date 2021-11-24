@@ -10,8 +10,8 @@ import {updateGenre, updateFilmCards} from '../../store/actions';
 import UserAccount from '../user-account/user-account';
 import Footer from '../footer/footer';
 import ShowMoreButton from '../show-more-button/show-more-button';
-import { AppRoute, CountFilms } from '../../const';
-import { getPromoFilmAction, changeFavoriteFilmsAction } from '../../store/api-actions';
+import { APIRoute, CountFilms } from '../../const';
+import { getPromoFilmAction, changeFavoriteFilmsAction, logoutAction } from '../../store/api-actions';
 import { ThunkAppDispatch } from '../../types/action';
 import { StatusData } from '../../types/status-data';
 import { useHistory } from 'react-router';
@@ -45,6 +45,9 @@ const mapDispatchToProps = (dispatch: Dispatch<Actions> & ThunkAppDispatch) => (
   onChangeFavoriteFilms({id, status}: StatusData){
     dispatch(changeFavoriteFilmsAction({id, status}));
   },
+  logout(){
+    dispatch(logoutAction());
+  },
 });
 
 
@@ -53,7 +56,7 @@ const connector = connect(mapStateToProps, mapDispatchToProps);
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
 function MainScreen(props: PropsFromRedux): JSX.Element{
-  const {films, genres, activeGenre, renderedFilmCardsCount, authorizationStatus, promoFilm, onUpdateGenre, onUpdateFilmCards, onUpdatePromoFilm, onChangeFavoriteFilms} = props;
+  const {films, genres, activeGenre, renderedFilmCardsCount, authorizationStatus, promoFilm, onUpdateGenre, onUpdateFilmCards, onUpdatePromoFilm, onChangeFavoriteFilms, logout} = props;
 
 
   const history = useHistory();
@@ -77,16 +80,16 @@ function MainScreen(props: PropsFromRedux): JSX.Element{
 
   return (
     <div>
-      <section className="film-card">
+      <section className="film-card" >
         <div className="film-card__bg">
-          <img src={promoFilm.posterImage} alt={promoFilm.name} />
+          <img src={promoFilm.backgroundImage} alt={promoFilm.name} />
         </div>
 
         <h1 className="visually-hidden">WTW</h1>
 
         <header className="page-header film-card__head">
           <Logo/>
-          <UserAccount authorizationStatus={authorizationStatus}/>
+          <UserAccount authorizationStatus={authorizationStatus} logoutAction={logout}/>
         </header>
 
         <div className="film-card__wrap">
@@ -103,7 +106,7 @@ function MainScreen(props: PropsFromRedux): JSX.Element{
               </p>
 
               <div className="film-card__buttons">
-                <button className="btn btn--play film-card__button" type="button" onClick={()=>history.push(AppRoute.Player+promoFilm.id)}>
+                <button className="btn btn--play film-card__button" type="button" onClick={()=>history.push(APIRoute.Player+promoFilm.id)}>
                   <svg viewBox="0 0 19 19" width="19" height="19">
                     <use href="#play-s"></use>
                   </svg>
@@ -133,7 +136,7 @@ function MainScreen(props: PropsFromRedux): JSX.Element{
           <GenresList genres={genres} activeGenre={activeGenre} updateGenre={onUpdateGenre}/>
           <FilmsList films={filteredFilms} renderedFilmCardsCount={renderedFilmCardsCount}/>
           {
-            renderedFilmCardsCount < filmsCount ? <ShowMoreButton filmsCount={filmsCount} renderedFilmCardsCount={renderedFilmCardsCount} updateFilmCards={updateFilmCards}/> : ''
+            renderedFilmCardsCount < filmsCount ? <ShowMoreButton filmsCount={filmsCount} renderedFilmCardsCount={renderedFilmCardsCount} updateFilmCards={onUpdateFilmCards}/> : ''
           }
         </section>
 

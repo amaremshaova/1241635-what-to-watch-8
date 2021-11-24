@@ -4,7 +4,7 @@ import {State} from '../../types/state';
 import {connect, ConnectedProps} from 'react-redux';
 import FilmsList from '../films-list/films-list';
 import Footer from '../footer/footer';
-import { getFavoriteFilmsAction } from '../../store/api-actions';
+import { getFavoriteFilmsAction, logoutAction } from '../../store/api-actions';
 import {ThunkAppDispatch} from '../../types/action';
 import { updateFilmCards } from '../../store/actions';
 
@@ -22,6 +22,9 @@ const mapDispatchToProps = (dispatch: ThunkAppDispatch) => ({
   onUpdateFilmCards(renderedFilmCardsCount: number){
     dispatch(updateFilmCards(renderedFilmCardsCount));
   },
+  logout(){
+    dispatch(logoutAction());
+  },
 });
 
 const connector = connect(mapStateToProps, mapDispatchToProps );
@@ -29,7 +32,7 @@ const connector = connect(mapStateToProps, mapDispatchToProps );
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
 function MyList(props : PropsFromRedux): JSX.Element {
-  const {authorizationStatus, myFilms, renderedFilmCardsCount, onUpdateFilmCards, onGetFavoriteFilms} = props;
+  const {authorizationStatus, myFilms, renderedFilmCardsCount, onUpdateFilmCards, onGetFavoriteFilms, logout} = props;
 
   onGetFavoriteFilms();
 
@@ -40,12 +43,12 @@ function MyList(props : PropsFromRedux): JSX.Element {
       <header className="page-header user-page__head">
         <Logo/>
         <h1 className="page-title user-page__title">My list</h1>
-        <UserAccount authorizationStatus={authorizationStatus}/>
+        <UserAccount authorizationStatus={authorizationStatus} logoutAction={logout}/>
       </header>
 
       <section className="catalog">
         <h2 className="catalog__title visually-hidden">Catalog</h2>
-        <FilmsList films={myFilms} renderedFilmCardsCount={renderedFilmCardsCount}/>
+        <FilmsList films={myFilms} renderedFilmCardsCount={renderedFilmCardsCount} />
       </section>
 
       <Footer/>
@@ -55,5 +58,4 @@ function MyList(props : PropsFromRedux): JSX.Element {
 
 
 export {MyList};
-
 export default connector(MyList);

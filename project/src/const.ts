@@ -3,9 +3,9 @@ export enum AppRoute {
   Login = '/login',
   MyList = '/mylist',
   Main = '/',
-  Film = '/films/:',
-  AddingReview = '/review',
-  Player = '/player/:'
+  Film = '/films/:id',
+  ReviewPage = '/films/:id/review',
+  Player = '/player/:id'
 }
 
 export enum AuthorizationStatus {
@@ -21,13 +21,14 @@ export enum CountFilms{
 
 export enum APIRoute {
   Film = '/films/',
-  Films = '/films',
   Login = '/login',
   Logout = '/logout',
+  Review = '/review',
   Reviews = '/comments/',
   Similar = '/similar',
   FavoriteFilms = '/favorite/',
-  PromoFilm = '/promo'
+  PromoFilm = '/promo',
+  Player = '/player/:'
 }
 
 export enum TabValues{

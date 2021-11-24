@@ -3,10 +3,11 @@ import { AppRoute } from '../../const';
 import { AuthorizationStatus } from '../../const';
 
 type UserAccountProps = {
-  authorizationStatus : AuthorizationStatus
+  authorizationStatus : AuthorizationStatus,
+  logoutAction : () => void;
 }
 
-function UserAccount({authorizationStatus} : UserAccountProps):JSX.Element{
+function UserAccount({authorizationStatus, logoutAction} : UserAccountProps):JSX.Element{
   return(
     <ul className="user-block">
       <li className="user-block__item">
@@ -15,7 +16,7 @@ function UserAccount({authorizationStatus} : UserAccountProps):JSX.Element{
         </Link>
       </li>
       <li className="user-block__item">
-        <Link to="/" className="user-block__link">{authorizationStatus ? 'Sign out' : 'Sign in'}</Link>
+        <Link to='/' className="user-block__link" onClick={()=>logoutAction()}>{authorizationStatus === AuthorizationStatus.Auth ? 'Sign out' : 'Sign in'}</Link>
       </li>
     </ul>
   );

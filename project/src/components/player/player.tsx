@@ -8,6 +8,7 @@ import { State } from '../../types/state';
 import { useRef, useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import { AppRoute } from '../../const';
+import { convertTimeElapsed } from '../../utils/utils';
 
 const mapStateToProps = ({activeFilm}: State) => ({
   activeFilm,
@@ -29,7 +30,9 @@ function Player(props: PropsFromRedux) : JSX.Element{
 
   const [isPlaying, setPlaying] = useState(true);
 
-  onGetFilm(1);
+  const positionFilmId = Number(window.location.pathname.lastIndexOf(':') + 1);
+  const filmId = Number(window.location.pathname.substr(positionFilmId));
+  onGetFilm(filmId);
 
   const videoRef = useRef<HTMLVideoElement | null>(null);
 
@@ -38,7 +41,7 @@ function Player(props: PropsFromRedux) : JSX.Element{
       return;
     }
 
-    if (isPlaying) {
+    if (videoRef.current !== null && isPlaying) {
       videoRef.current.play();
       return;
     }
@@ -48,10 +51,12 @@ function Player(props: PropsFromRedux) : JSX.Element{
 
   const history = useHistory();
 
+  const timeElapsed = (videoRef.current !== null) ? (Math.floor(videoRef.current.duration) - Math.floor(videoRef.current.currentTime)) : 0;
+
 
   return(
     <div className="player">
-      <video src={activeFilm.videoLink} ref={videoRef} className="player__video" autoPlay></video>
+      <video src={activeFilm.videoLink} ref={videoRef} className="player__video" autoPlay muted></video>
 
       <button type="button" className="player__exit" onClick={()=>{setPlaying(false); history.push(AppRoute.Film + activeFilm.id);}}>Exit</button>
 
@@ -61,7 +66,7 @@ function Player(props: PropsFromRedux) : JSX.Element{
             <progress className="player__progress" value="30" max="100"></progress>
             <div className="player__toggler" style={{left: '30%'}}>Toggler</div>
           </div>
-          <div className="player__time-value">1:30:29</div>
+          <div className="player__time-value">{convertTimeElapsed(timeElapsed)}</div>
         </div>
 
         <div className="player__controls-row">

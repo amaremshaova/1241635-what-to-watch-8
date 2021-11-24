@@ -7,6 +7,9 @@ import { ThunkAppDispatch } from '../../types/action';
 import UserAccount from '../user-account/user-account';
 import { connect } from 'react-redux';
 import { ConnectedProps } from 'react-redux';
+import { logoutAction } from '../../store/api-actions';
+import { AppRoute } from '../../const';
+import { Link } from 'react-router-dom';
 
 const mapStateToProps = ({activeFilm, authorizationStatus, responseStatus}: State) => ({
   activeFilm,
@@ -21,6 +24,9 @@ const mapDispatchToProps = (dispatch: ThunkAppDispatch) => ({
   onAddReview(id: number, {rating, comment} : CommentPost){
     dispatch(addReviewAction(id, {rating, comment}));
   },
+  logout(){
+    dispatch(logoutAction());
+  },
 
 });
 
@@ -28,10 +34,11 @@ const connector = connect(mapStateToProps, mapDispatchToProps);
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
 function ReviewFormPage(props: PropsFromRedux) :JSX.Element{
-  const {activeFilm, authorizationStatus, responseStatus, onGetFilm, onAddReview} = props;
+  const {activeFilm, authorizationStatus, responseStatus, onGetFilm, onAddReview, logout} = props;
 
-  const filmId =1;
-  onGetFilm(1);
+  const positionFilmId = Number(window.location.pathname.lastIndexOf(':') + 1);
+  const filmId = Number(window.location.pathname.substr(positionFilmId));
+  onGetFilm(filmId);
 
   return(
     <div>
@@ -49,14 +56,14 @@ function ReviewFormPage(props: PropsFromRedux) :JSX.Element{
             <nav className="breadcrumbs">
               <ul className="breadcrumbs__list">
                 <li className="breadcrumbs__item">
-                  <a href="film-page.html" className="breadcrumbs__link">{activeFilm.name}</a>
+                  <Link to={AppRoute.Main} className="breadcrumbs__link">{activeFilm.name}</Link>
                 </li>
                 <li className="breadcrumbs__item">
                   <a className="breadcrumbs__link" href="/">Add review</a>
                 </li>
               </ul>
             </nav>
-            <UserAccount authorizationStatus={authorizationStatus}/>
+            <UserAccount authorizationStatus={authorizationStatus} logoutAction={logout}/>
           </header>
 
           <div className="film-card__poster film-card__poster--small">

@@ -2,7 +2,6 @@ import {State} from '../types/state';
 import {ActionType, Actions} from '../types/action';
 import { Film} from '../types/films';
 import { AuthorizationStatus} from '../const';
-import { myFilms } from '../mocks/my-films';
 
 const getGenres = (films : Film[]) => {
   const allGenres = ['All genres'];
@@ -58,7 +57,7 @@ const reducer = (state: State = initialState, action: Actions): State  => {
     case ActionType.GetFavoriteFilms:
       return {...state, myFilms: action.myFilms};
     case ActionType.AddFavoriteFilm:
-      return {...state, myFilms: [...myFilms, action.favoriteFilm]};
+      return {...state, myFilms: [...state.myFilms, action.favoriteFilm]};
     case ActionType.UpdateGenre:
       return {...state, activeGenre: action.genre};
     case ActionType.GetFilm:
