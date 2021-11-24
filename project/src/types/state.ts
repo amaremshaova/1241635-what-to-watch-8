@@ -5,10 +5,13 @@ import { ReviewType } from './review';
 export type State = {
   renderedFilmCardsCount: number,
   activeGenre: string,
-  genres: string[],
   films: Film[],
-  myFilms: Film[],
+  genres: string[],
   reviews: ReviewType[],
   authorizationStatus : AuthorizationStatus,
-  isDataLoaded: boolean
+  isDataLoaded: boolean,
+  activeFilm: Film,
+  myFilms: Film[],
+  moreLikeFilms: Film[],
+  promoFilm: Film
 };

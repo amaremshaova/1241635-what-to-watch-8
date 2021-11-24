@@ -4,12 +4,12 @@ type ShowMoreButtonProps = {
   updateFilmCards:(newRenderedFilmCardsCount: number)=>void
 }
 
-const TASK_COUNT_PER_STEP = 8;
+const  STEP_INCREASE_COUNT = 8;
 
 
 function ShowMoreButton({filmsCount, renderedFilmCardsCount, updateFilmCards}:ShowMoreButtonProps): JSX.Element{
 
-  const newRenderedFilmCardsCount = Math.min(filmsCount, renderedFilmCardsCount + TASK_COUNT_PER_STEP);
+  const newRenderedFilmCardsCount = Math.min(filmsCount, renderedFilmCardsCount +  STEP_INCREASE_COUNT);
 
   return (
     <div className="catalog__more">

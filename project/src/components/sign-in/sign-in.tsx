@@ -1,15 +1,16 @@
 import Logo from '../logo/logo';
-import {useRef, FormEvent} from 'react';
+import {useRef, FormEvent, useState} from 'react';
 import {useHistory} from 'react-router-dom';
 import {connect, ConnectedProps} from 'react-redux';
 import {loginAction} from '../../store/api-actions';
 import {ThunkAppDispatch} from '../../types/action';
-import {AuthData} from '../../types/auth-data';
+import {UserData} from '../../types/user-data';
 import {AppRoute} from '../../const';
+import Footer from '../footer/footer';
 
 const mapDispatchToProps = (dispatch: ThunkAppDispatch) => ({
-  onSubmit(authData: AuthData) {
-    dispatch(loginAction(authData));
+  onSubmit(userData: UserData) {
+    dispatch(loginAction(userData));
   },
 });
 
@@ -20,19 +21,55 @@ type PropsFromRedux = ConnectedProps<typeof connector>;
 function AuthScreen(props: PropsFromRedux): JSX.Element {
   const {onSubmit} = props;
 
+  const [loginError, setErrorLogin] = useState(false);
+  const [passwordError, setErrorPassword] = useState(false);
+
   const loginRef = useRef<HTMLInputElement | null>(null);
   const passwordRef = useRef<HTMLInputElement | null>(null);
 
   const history = useHistory();
 
+  const checkLogin = () => {
+    const loginPattern = /^[^ ]+@[^ ]+\.[a-z]{2,3}$/;
+    if (loginRef.current === null || !loginRef.current.value.match(loginPattern)){
+      setErrorLogin(true);
+    }
+    else {
+      setErrorLogin(false);
+    }
+  };
+
+  const checkPassword = () => {
+    const passPattern = /(?=.*\d)(?=.*[a-zA-z])/;
+    if (passwordRef.current === null || !passwordRef.current.value.match(passPattern)){
+      setErrorPassword(true);
+    }
+    else{
+      setErrorPassword(false);
+    }
+  };
+
   const handleSubmit = (evt: FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
 
-    if (loginRef.current !== null && passwordRef.current !== null) {
+    if ((loginRef.current !== null && !loginError && loginRef.current.value !== '') && (passwordRef.current !== null && !passwordError && passwordRef.current.value !== '')) {
       onSubmit({
         email: loginRef.current.value,
         password: passwordRef.current.value,
       });
+      history.push(AppRoute.Main);
+    }
+  };
+
+  const getErrorMessage = () => {
+    if (loginError && passwordError){
+      return <p>Please enter a valid email address and password</p>;
+    }
+    if (loginError) {
+      return <p>Please enter a valid email address</p>;
+    }
+    if (passwordError) {
+      return <p>Please enter a valid password</p>;
     }
   };
 
@@ -45,36 +82,25 @@ function AuthScreen(props: PropsFromRedux): JSX.Element {
       </header>
 
       <div className="sign-in user-page__content">
-        <form action="#" className="sign-in__form" onSubmit={handleSubmit}>
+        <form action="#" className="sign-in__form" onSubmit={(evt) =>handleSubmit(evt)}>
+          { (loginError || passwordError) ? <div className="sign-in__message">{getErrorMessage()} </div> : ''}
           <div className="sign-in__fields">
-            <div className="sign-in__field">
-              <input  ref={loginRef} className="sign-in__input" type="email" placeholder="Email address" name="user-email" id="user-email" />
+            <div className={`sign-in__field ${loginError ? 'sign-in__field--error' : ''}`} >
+              <input  ref={loginRef} className="sign-in__input" type="email" placeholder="Email address" name="user-email" id="user-email"  onChange={()=>{checkLogin();}}/>
               <label className="sign-in__label visually-hidden" htmlFor="user-email">Email address</label>
             </div>
-            <div className="sign-in__field">
-              <input   ref={passwordRef} className="sign-in__input" type="password" placeholder="Password" name="user-password" id="user-password" />
+            <div className={`sign-in__field ${passwordError ? 'sign-in__field--error' : ''}`}>
+              <input   ref={passwordRef} className="sign-in__input" type="password" placeholder="Password" name="user-password" id="user-password" onChange={()=>{checkPassword();}}/>
               <label className="sign-in__label visually-hidden" htmlFor="user-password">Password</label>
             </div>
           </div>
           <div className="sign-in__submit">
-            <button onClick={() => history.push(AppRoute.Main)} className="sign-in__btn" type="submit">Sign in</button>
+            <button className="sign-in__btn" type="submit">Sign in</button>
           </div>
         </form>
       </div>
 
-      <footer className="page-footer">
-        <div className="logo">
-          <a href="main.html" className="logo__link logo__link--light">
-            <span className="logo__letter logo__letter--1">W</span>
-            <span className="logo__letter logo__letter--2">T</span>
-            <span className="logo__letter logo__letter--3">W</span>
-          </a>
-        </div>
-
-        <div className="copyright">
-          <p>© 2019 What to watch Ltd.</p>
-        </div>
-      </footer>
+      <Footer/>
     </div>
   );
 

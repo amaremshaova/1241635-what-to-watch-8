@@ -1,13 +1,12 @@
 import {useEffect, useRef} from 'react';
 
 type VideoPlayerProps = {
-  noSound: boolean;
   isPlaying: boolean;
   src: string;
   srcPoster: string;
 }
 
-function VideoPlayer({noSound, isPlaying, src, srcPoster}: VideoPlayerProps): JSX.Element {
+function VideoPlayer({isPlaying, src, srcPoster}: VideoPlayerProps): JSX.Element {
 
   const videoRef = useRef<HTMLVideoElement | null>(null);
 
@@ -28,7 +27,7 @@ function VideoPlayer({noSound, isPlaying, src, srcPoster}: VideoPlayerProps): JS
   return (
 
     <div>
-      <video src={src} ref={videoRef} className="player__video" poster={isPlaying ? '' : srcPoster}></video>
+      <video src={isPlaying ? src : ''} ref={videoRef} className="player__video" poster={isPlaying ? '' : srcPoster} muted></video>
     </div>
   );
 }
