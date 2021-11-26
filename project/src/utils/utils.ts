@@ -1,4 +1,4 @@
-
+import { AuthorizationStatus } from '../const';
 
 export function convertTime(timeInMinutes : number):string {
   const COUNT_MINUTES_IN_HOUR = 60;
@@ -51,3 +51,7 @@ export function getLevel(rating: number): string {
 
   return 'Bad';
 }
+
+export const isCheckedAuth = (authorizationStatus: AuthorizationStatus): boolean =>
+  authorizationStatus === AuthorizationStatus.Unknown;
+

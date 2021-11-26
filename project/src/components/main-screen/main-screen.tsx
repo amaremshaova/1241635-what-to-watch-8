@@ -2,64 +2,29 @@
 import FilmsList from '../films-list/films-list';
 import Logo from '../logo/logo';
 import GenresList from '../genres-list/genres-list';
-import {State} from '../../types/state';
-import {Actions} from '../../types/action';
-import {Dispatch} from 'redux';
-import {connect, ConnectedProps} from 'react-redux';
-import {updateGenre, updateFilmCards} from '../../store/actions';
+import {useDispatch, useSelector} from 'react-redux';
+import { updateFilmCards} from '../../store/actions';
 import UserAccount from '../user-account/user-account';
 import Footer from '../footer/footer';
 import ShowMoreButton from '../show-more-button/show-more-button';
 import { APIRoute, CountFilms } from '../../const';
-import { getPromoFilmAction, changeFavoriteFilmsAction, logoutAction } from '../../store/api-actions';
-import { ThunkAppDispatch } from '../../types/action';
-import { StatusData } from '../../types/status-data';
+import { getPromoFilmAction, changeFavoriteFilmsAction} from '../../store/api-actions';
 import { useHistory } from 'react-router';
+import {getPromoFilm, getFilms} from '../../store/film-data/selectors';
+import { useState } from 'react';
+import { getGenres } from '../../utils/get-genres';
 
+function MainScreen(): JSX.Element{
 
-const mapStateToProps = ({films, reviews, activeGenre, genres,
-  renderedFilmCardsCount, authorizationStatus, promoFilm}: State) => ({
-  films,
-  reviews,
-  activeGenre,
-  genres,
-  renderedFilmCardsCount,
-  authorizationStatus,
-  promoFilm,
-});
+  const promoFilm = useSelector(getPromoFilm);
+  const films = useSelector(getFilms);
+  const genres = getGenres(films);
 
-
-const mapDispatchToProps = (dispatch: Dispatch<Actions> & ThunkAppDispatch) => ({
-  onUpdateGenre(genre : string) {
-    dispatch(updateGenre(genre));
-  },
-
-  onUpdateFilmCards(renderedFilmCardsCount: number){
-    dispatch(updateFilmCards(renderedFilmCardsCount));
-  },
-
-  onUpdatePromoFilm(){
-    dispatch(getPromoFilmAction());
-  },
-
-  onChangeFavoriteFilms({id, status}: StatusData){
-    dispatch(changeFavoriteFilmsAction({id, status}));
-  },
-  logout(){
-    dispatch(logoutAction());
-  },
-});
-
-
-const connector = connect(mapStateToProps, mapDispatchToProps);
-
-type PropsFromRedux = ConnectedProps<typeof connector>;
-
-function MainScreen(props: PropsFromRedux): JSX.Element{
-  const {films, genres, activeGenre, renderedFilmCardsCount, authorizationStatus, promoFilm, onUpdateGenre, onUpdateFilmCards, onUpdatePromoFilm, onChangeFavoriteFilms, logout} = props;
-
+  const [activeGenre, setActiveGenre] = useState('All genres');
+  const [renderedFilmCardsCount, setRenderedFilmCardsCount ] = useState(CountFilms.Catalog);
 
   const history = useHistory();
+  const dispatch = useDispatch();
 
   let filteredFilms = [];
   if (activeGenre === 'All genres'){
@@ -69,14 +34,14 @@ function MainScreen(props: PropsFromRedux): JSX.Element{
     filteredFilms = films.filter((film) => film.genre === activeGenre);
   }
 
-  onUpdatePromoFilm();
+  dispatch(getPromoFilmAction());
 
   const filmsCount = filteredFilms.length;
-  onUpdateFilmCards(CountFilms.Catalog);
+  dispatch(updateFilmCards(CountFilms.Catalog));
 
   const handleChangeFavoriteFilms = () =>{
     const status = promoFilm.isFavorite ? 0 : 1;
-    onChangeFavoriteFilms({id: promoFilm.id, status: status});};
+    dispatch(changeFavoriteFilmsAction({id: promoFilm.id, status: status}));};
 
   return (
     <div>
@@ -89,7 +54,7 @@ function MainScreen(props: PropsFromRedux): JSX.Element{
 
         <header className="page-header film-card__head">
           <Logo/>
-          <UserAccount authorizationStatus={authorizationStatus} logoutAction={logout}/>
+          <UserAccount />
         </header>
 
         <div className="film-card__wrap">
@@ -133,10 +98,15 @@ function MainScreen(props: PropsFromRedux): JSX.Element{
         <section className="catalog">
           <h2 className="catalog__title visually-hidden">Catalog</h2>
 
-          <GenresList genres={genres} activeGenre={activeGenre} updateGenre={onUpdateGenre}/>
+          <GenresList genres = {genres} activeGenre={activeGenre} updateGenre={setActiveGenre}/>
           <FilmsList films={filteredFilms} renderedFilmCardsCount={renderedFilmCardsCount}/>
           {
-            renderedFilmCardsCount < filmsCount ? <ShowMoreButton filmsCount={filmsCount} renderedFilmCardsCount={renderedFilmCardsCount} updateFilmCards={onUpdateFilmCards}/> : ''
+            renderedFilmCardsCount < filmsCount ?
+              <ShowMoreButton
+                filmsCount={filmsCount}
+                renderedFilmCardsCount={renderedFilmCardsCount}
+                updateFilmCards={setRenderedFilmCardsCount}
+              /> : ''
           }
         </section>
 
@@ -146,5 +116,4 @@ function MainScreen(props: PropsFromRedux): JSX.Element{
   );
 }
 
-export {MainScreen};
-export default connector(MainScreen);
+export default MainScreen;

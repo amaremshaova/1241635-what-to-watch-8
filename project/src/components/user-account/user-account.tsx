@@ -1,13 +1,19 @@
+import { useDispatch, useSelector } from 'react-redux';
 import {Link} from 'react-router-dom';
 import { AppRoute } from '../../const';
 import { AuthorizationStatus } from '../../const';
+import { getAuthorizationStatus } from '../../store/user-process/selectors';
+import { logoutAction } from '../../store/api-actions';
 
-type UserAccountProps = {
+/*type UserAccountProps = {
   authorizationStatus : AuthorizationStatus,
   logoutAction : () => void;
-}
+}*/
 
-function UserAccount({authorizationStatus, logoutAction} : UserAccountProps):JSX.Element{
+function UserAccount():JSX.Element{
+
+  const authorizationStatus = useSelector(getAuthorizationStatus);
+  const dispatch = useDispatch();
   return(
     <ul className="user-block">
       <li className="user-block__item">
@@ -16,7 +22,7 @@ function UserAccount({authorizationStatus, logoutAction} : UserAccountProps):JSX
         </Link>
       </li>
       <li className="user-block__item">
-        <Link to='/' className="user-block__link" onClick={()=>logoutAction()}>{authorizationStatus === AuthorizationStatus.Auth ? 'Sign out' : 'Sign in'}</Link>
+        <Link to='/' className="user-block__link" onClick={()=>dispatch(logoutAction)}>{authorizationStatus === AuthorizationStatus.Auth ? 'Sign out' : 'Sign in'}</Link>
       </li>
     </ul>
   );

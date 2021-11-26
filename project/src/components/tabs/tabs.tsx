@@ -1,33 +1,42 @@
 import Review from '../review/review';
-import { ReviewType} from '../../types/review';
-import {Film}  from '../../types/films';
 import { convertTime } from '../../utils/utils';
 import {getLevel} from '../../utils/utils';
-import { useState} from 'react';
+import { useState, useRef} from 'react';
 import {TabValues} from '../../const';
+import { useSelector } from 'react-redux';
+import { getFilm, getReviews } from '../../store/film-data/selectors';
 
-type TabsProps = {
+/*type TabsProps = {
   film: Film;
   reviews: ReviewType[]
-}
+}/*/
 
-function Tabs({film, reviews}: TabsProps): JSX.Element
+function Tabs(): JSX.Element
 {
+  const film =useSelector(getFilm);
+  const reviews = useSelector(getReviews);
   const [tab, setTab] = useState(TabValues.Overview);
+  const starringTextRef =  useRef<HTMLSpanElement | null>(null);
+  const strongStarringTextRef = useRef<HTMLParagraphElement | null>(null);
+
+
+  if (starringTextRef.current !== null) {
+    starringTextRef.current.innerHTML = film.starring.map((star, index)=> ` <br/> ${star}`).join();
+  }
 
 
   return(
     <div className="film-card__desc">
       <nav className="film-nav film-card__nav">
         <ul className="film-nav__list">
-          <li className="film-nav__item">
-            <a href="#!" className={`film-nav__link ${tab === TabValues.Overview ? 'film-nav__item--active' : ''} `} onClick = {(evt) =>{evt.preventDefault(); setTab(TabValues.Overview);}}>Overview</a>
+          <li className={`film-nav__item ${tab === TabValues.Overview ? 'film-nav__item--active' : ''}`}>
+            <a href="#!" className='film-nav__link' onClick = {(evt) =>{evt.preventDefault(); setTab(TabValues.Overview);}}>Overview</a>
           </li>
-          <li className="film-nav__item " >
-            <a href="#!" className={`film-nav__link ${tab === TabValues.Details ? 'film-nav__item--active' : ''} `} onClick = {(evt) =>{evt.preventDefault(); setTab(TabValues.Details);}}>Details</a>
+          <li className={`film-nav__item ${tab === TabValues.Details ? 'film-nav__item--active' : ''}`} >
+            <a href="#!" className='film-nav__link' onClick = {(evt) =>{evt.preventDefault(); setTab(TabValues.Details);}}>Details</a>
           </li>
-          <li className="film-nav__item">
-            <a href="#!" className={`film-nav__link ${tab === TabValues.Review ? 'film-nav__item--active' : ''} `} onClick = {(evt) =>{evt.preventDefault(); setTab(TabValues.Review);}}>Reviews</a>
+          <li className={`film-nav__item ${tab === TabValues.Review ? 'film-nav__item--active' : ''}`}>
+            <a href="#!" className='film-nav__link' onClick = {(evt) =>{evt.preventDefault(); setTab(TabValues.Review);}}>Reviews</a>
           </li>
         </ul>
       </nav>
@@ -40,10 +49,7 @@ function Tabs({film, reviews}: TabsProps): JSX.Element
           </p>
           <p className="film-card__details-item">
             <strong className="film-card__details-name">Starring</strong>
-            <span className="film-card__details-value">
-              {film.starring.length !== 1 ? film.starring.slice(0, film.starring.length - 1).map((star)=> `${star}, `) :
-                film.starring[film.starring.length - 1]}
-
+            <span className="film-card__details-value" ref = {starringTextRef}>
             </span>
           </p>
         </div>
@@ -76,11 +82,8 @@ function Tabs({film, reviews}: TabsProps): JSX.Element
         <div className="film-card__text">
           <p>{film.description}</p>
           <p className="film-card__director"><strong>Director: {film.director}</strong></p>
-          <p className="film-card__starring">
-            <strong>Starring:
-              {film.starring.length !== 1 ? film.starring.slice(0, film.starring.length - 2).forEach((star)=> `${star} + ', '`) :
-                film.starring[film.starring.length - 1]} and other
-            </strong>
+          <p className="film-card__starring" ref = {strongStarringTextRef}>
+            <strong>Starring: {film.starring.map((star, index)=> ` ${star}`).join()} and other</strong>
           </p>
         </div>
       </div>

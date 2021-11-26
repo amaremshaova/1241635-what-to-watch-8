@@ -1,43 +1,42 @@
-import { ConnectedProps } from 'react-redux';
-
+import { useDispatch, useSelector } from 'react-redux';
 import { getFilmAction } from '../../store/api-actions';
-import { ThunkAppDispatch } from '../../types/action';
-import { connect } from 'react-redux';
-import { State } from '../../types/state';
-
 import { useRef, useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
-import { AppRoute } from '../../const';
+import { APIRoute} from '../../const';
 import { convertTimeElapsed } from '../../utils/utils';
-
-const mapStateToProps = ({activeFilm}: State) => ({
-  activeFilm,
-});
-
-const mapDispatchToProps = (dispatch: ThunkAppDispatch) => ({
-  onGetFilm(id: number) {
-    dispatch(getFilmAction(id));
-  },
-});
+import { getFilm } from '../../store/film-data/selectors';
 
 
-const connector = connect(mapStateToProps, mapDispatchToProps);
-type PropsFromRedux = ConnectedProps<typeof connector>;
+function Player() : JSX.Element{
 
+  const [isLoading, setIsLoading] = useState(true);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
 
-function Player(props: PropsFromRedux) : JSX.Element{
-  const {activeFilm, onGetFilm} = props;
+  const dispatch = useDispatch();
 
   const [isPlaying, setPlaying] = useState(true);
 
   const positionFilmId = Number(window.location.pathname.lastIndexOf(':') + 1);
   const filmId = Number(window.location.pathname.substr(positionFilmId));
-  onGetFilm(filmId);
+  dispatch(getFilmAction(filmId));
+  const film = useSelector(getFilm);
 
-  const videoRef = useRef<HTMLVideoElement | null>(null);
+
+  useEffect(() => {
+    if (videoRef.current !== null){
+      videoRef.current.onloadeddata = () => setIsLoading(false);
+    }
+    return () => {
+      if (videoRef.current !== null) {
+        videoRef.current.onloadeddata = null;
+        videoRef.current = null;
+      }
+    };
+  }, [film.videoLink]);
 
   useEffect(() => {
     if (videoRef.current === null) {
+
       return;
     }
 
@@ -56,9 +55,9 @@ function Player(props: PropsFromRedux) : JSX.Element{
 
   return(
     <div className="player">
-      <video src={activeFilm.videoLink} ref={videoRef} className="player__video" autoPlay muted></video>
+      <video src={film.videoLink} ref={videoRef} className="player__video" autoPlay muted></video>
 
-      <button type="button" className="player__exit" onClick={()=>{setPlaying(false); history.push(AppRoute.Film + activeFilm.id);}}>Exit</button>
+      <button type="button" className="player__exit" onClick={()=>{setPlaying(false); history.push(APIRoute.Film + film.id);}}>Exit</button>
 
       <div className="player__controls">
         <div className="player__controls-row">
@@ -71,14 +70,14 @@ function Player(props: PropsFromRedux) : JSX.Element{
 
         <div className="player__controls-row">
           {isPlaying ?
-            <button type="button" className="player__play" onClick={()=> setPlaying(false)}>
+            <button type="button" className="player__play" onClick={()=> setPlaying(false)}  disabled={isLoading}>
               <svg viewBox="0 0 14 21" width="14" height="21">
                 <use href="#pause"></use>
               </svg>
               <span>Pause</span>
             </button>
             :
-            <button type="button" className="player__play" onClick={()=> setPlaying(true)}>
+            <button type="button" className="player__play" onClick={()=> setPlaying(true)}  disabled={isLoading}>
               <svg viewBox="0 0 19 19" width="19" height="19">
                 <use href="#play-s"></use>
               </svg>
@@ -98,5 +97,4 @@ function Player(props: PropsFromRedux) : JSX.Element{
   );
 }
 
-export {Player};
-export default connector(Player);
+export default Player;

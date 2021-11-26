@@ -1,14 +1,18 @@
 import {ThunkActionResult} from '../types/action';
-import {loadFilms, getFilm, requireAuthorization, requireLogout, getReviews, getMoreLikeFilms, getFavoriteFilms, addFavoriteFilm, addReview} from './actions';
+import {loadFilms, loadFilm, requireAuthorization, requireLogout, loadReviews, loadSimilarFilms, loadFavoriteFilms, addFavoriteFilm, addReview} from './actions';
 import {saveToken, dropToken, Token} from '../services/token';
 import {APIRoute, AuthorizationStatus} from '../const';
 import {FilmServer} from '../types/films';
 import {UserData} from '../types/user-data';
 import {adaptToClient} from '../adapter';
 import { ReviewType } from '../types/review';
-import { getPromoFilm } from './actions';
+import {loadPromoFilm } from './actions';
 import { StatusData } from '../types/status-data';
 import { CommentPost } from '../types/review';
+import {toast} from 'react-toastify';
+
+
+const AUTH_FAIL_MESSAGE = 'Не забудьте авторизоваться';
 
 export const fetchFilmsAction = (): ThunkActionResult =>
   async (dispatch, _getState, api): Promise<void> => {
@@ -19,31 +23,35 @@ export const fetchFilmsAction = (): ThunkActionResult =>
 export const getFilmAction = (id: number): ThunkActionResult =>
   async (dispatch, _getState, api) => {
     const {data} = await api.get<FilmServer>(APIRoute.Film+id);
-    dispatch(getFilm(adaptToClient(data)));
+    dispatch(loadFilm(adaptToClient(data)));
   };
 
 export const getPromoFilmAction = (): ThunkActionResult =>
   async (dispatch, _getState, api) => {
     const {data} = await api.get<FilmServer>(APIRoute.PromoFilm);
-    dispatch(getPromoFilm(adaptToClient(data)));
+    dispatch(loadPromoFilm(adaptToClient(data)));
   };
 
-export const getMoreLikeFilmsAction = (id: number): ThunkActionResult =>
+export const getSimilarFilmsAction = (id: number): ThunkActionResult =>
   async (dispatch, _getState, api) => {
     const {data} = await api.get<FilmServer[]>(APIRoute.Film+id+APIRoute.Similar);
-    dispatch(getMoreLikeFilms(data.map((film)=> (adaptToClient(film)))));
+    dispatch(loadSimilarFilms(data.map((film)=> (adaptToClient(film)))));
   };
 
 export const getFavoriteFilmsAction = (): ThunkActionResult =>
   async (dispatch, _getState, api) => {
-    const {data} = await api.get<FilmServer[]>(APIRoute.FavoriteFilms);
-    dispatch(getFavoriteFilms(data.map((film)=> (adaptToClient(film)))));
+    try{
+      const {data} = await api.get<FilmServer[]>(APIRoute.FavoriteFilms);
+      dispatch(loadFavoriteFilms(data.map((film)=> (adaptToClient(film)))));
+    } catch {
+      toast.info(AUTH_FAIL_MESSAGE);
+    }
   };
 
 export const getReviewsAction = (id: number): ThunkActionResult =>
   async (dispatch, _getState, api) => {
     const {data} = await api.get<ReviewType[]>(APIRoute.Reviews+id);
-    dispatch(getReviews(data));
+    dispatch(loadReviews(data));
   };
 
 export const addReviewAction = (id: number,  {rating, comment} : CommentPost): ThunkActionResult =>
@@ -54,10 +62,12 @@ export const addReviewAction = (id: number,  {rating, comment} : CommentPost): T
 
 export const checkAuthAction = (): ThunkActionResult =>
   async (dispatch, _getState, api) => {
-    await api.get(APIRoute.Login)
-      .then(() => {
-        dispatch(requireAuthorization(AuthorizationStatus.Auth));
-      });
+    try {
+      await api.get(APIRoute.Login);
+      dispatch(requireAuthorization(AuthorizationStatus.Auth));
+    } catch {
+      toast.info(AUTH_FAIL_MESSAGE);
+    }
   };
 
 export const loginAction = ({email, password}: UserData): ThunkActionResult =>
