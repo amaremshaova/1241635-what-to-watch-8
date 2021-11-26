@@ -1,54 +1,33 @@
-import { CommentPost } from '../../types/review';
 import ReviewForm from '../review-form/review-form';
 import Logo from '../logo/logo';
-import { addReviewAction, getFilmAction } from '../../store/api-actions';
-import { State } from '../../types/state';
-import { ThunkAppDispatch } from '../../types/action';
+import {getFilmAction } from '../../store/api-actions';
+
 import UserAccount from '../user-account/user-account';
-import { connect } from 'react-redux';
-import { ConnectedProps } from 'react-redux';
-import { logoutAction } from '../../store/api-actions';
+import { useDispatch, useSelector } from 'react-redux';
 import { AppRoute } from '../../const';
 import { Link } from 'react-router-dom';
+import { getFilm } from '../../store/film-data/selectors';
 
-const mapStateToProps = ({activeFilm, authorizationStatus, responseStatus}: State) => ({
-  activeFilm,
-  authorizationStatus,
-  responseStatus,
-});
+function ReviewFormPage() :JSX.Element{
 
-const mapDispatchToProps = (dispatch: ThunkAppDispatch) => ({
-  onGetFilm(id: number) {
-    dispatch(getFilmAction(id));
-  },
-  onAddReview(id: number, {rating, comment} : CommentPost){
-    dispatch(addReviewAction(id, {rating, comment}));
-  },
-  logout(){
-    dispatch(logoutAction());
-  },
-
-});
-
-const connector = connect(mapStateToProps, mapDispatchToProps);
-type PropsFromRedux = ConnectedProps<typeof connector>;
-
-function ReviewFormPage(props: PropsFromRedux) :JSX.Element{
-  const {activeFilm, authorizationStatus, responseStatus, onGetFilm, onAddReview, logout} = props;
+  const dispatch = useDispatch();
 
   const positionFilmId = Number(window.location.pathname.lastIndexOf(':') + 1);
-  const filmId = Number(window.location.pathname.substr(positionFilmId));
-  onGetFilm(filmId);
+  const position =  Number(window.location.pathname.indexOf('/review'));
+  const filmId = Number(window.location.pathname.substring(positionFilmId, position));
+
+  dispatch(getFilmAction(filmId));
+  const film = useSelector(getFilm);
 
   return(
     <div>
-      <section className="film-card film-card--full">
+      <section className="film-card film-card--full" style={{backgroundColor:film.backgroundColor}}>
         <div className="film-card__header">
           <div className="film-card__bg">
-            <img src={activeFilm.posterImage} alt={`${activeFilm.name}  poster`} />
+            <img src={film.backgroundImage} alt={`${film.name}  poster`} />
           </div>
 
-          <h1 className="visually-hidden">WTW</h1>
+          <h1 className="visually-hidden">{filmId}</h1>
 
           <header className="page-header">
             <Logo/>
@@ -56,25 +35,24 @@ function ReviewFormPage(props: PropsFromRedux) :JSX.Element{
             <nav className="breadcrumbs">
               <ul className="breadcrumbs__list">
                 <li className="breadcrumbs__item">
-                  <Link to={AppRoute.Main} className="breadcrumbs__link">{activeFilm.name}</Link>
+                  <Link to={AppRoute.Main} className="breadcrumbs__link">{film.name}</Link>
                 </li>
                 <li className="breadcrumbs__item">
                   <a className="breadcrumbs__link" href="/">Add review</a>
                 </li>
               </ul>
             </nav>
-            <UserAccount authorizationStatus={authorizationStatus} logoutAction={logout}/>
+            <UserAccount />
           </header>
 
           <div className="film-card__poster film-card__poster--small">
-            <img src={activeFilm.posterImage} alt={`${activeFilm.name}  poster`} width="218" height="327" />
+            <img src={film.posterImage} alt={`${film.name}  poster`} width="218" height="327" />
           </div>
         </div>
-        <ReviewForm onAddReview = {onAddReview} id = {filmId} responseStatus={responseStatus}/>
+        <ReviewForm id = {filmId} backgroundColor={film.backgroundColor}/>
       </section>
     </div>
   );
 }
 
-export {ReviewFormPage};
-export default connector(ReviewFormPage);
+export default ReviewFormPage;

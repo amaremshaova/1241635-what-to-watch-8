@@ -5,51 +5,24 @@ import Player from '../player/player';
 import NotFoundPage from '../not-found-page/not-found-page';
 import PrivateRoute from '../private-route/private-route';
 import {AppRoute} from '../../const';
-import LoadingScreen from '../loading-screen/loading-screen';
 import {connect, ConnectedProps} from 'react-redux';
 import {State} from '../../types/state';
-import { isCheckedAuth } from '../../const';
 import Film from '../film/film';
-import { ReviewFormPage } from '../review-form-page/review-form-page';
-import { MyList } from '../my-list/my-list';
-import { ThunkAppDispatch } from '../../types/action';
-import { getFavoriteFilmsAction, logoutAction, getFilmAction, addReviewAction} from '../../store/api-actions';
-import { updateFilmCards } from '../../store/actions';
-import { CommentPost } from '../../types/review';
+import MyList from '../my-list/my-list';
+import ReviewFormPage from '../review-form-page/review-form-page';
+import { isCheckedAuth } from '../../utils/utils';
+import LoadingScreen from '../loading-screen/loading-screen';
 
-const mapStateToProps = ({authorizationStatus, isDataLoaded, myFilms, renderedFilmCardsCount, activeFilm, responseStatus}: State) => ({
-  authorizationStatus,
-  isDataLoaded,
-  myFilms,
-  renderedFilmCardsCount,
-  activeFilm,
-  responseStatus,
+const mapStateToProps = ({USER, DATA}: State) => ({
+  authorizationStatus : USER.authorizationStatus,
+  isDataLoaded : DATA.isDataLoaded,
 });
 
-const mapDispatchToProps = (dispatch: ThunkAppDispatch) => ({
-  onGetFavoriteFilms(){
-    dispatch(getFavoriteFilmsAction());
-  },
-  onUpdateFilmCards(renderedFilmCardsCount: number){
-    dispatch(updateFilmCards(renderedFilmCardsCount));
-  },
-  logout(){
-    dispatch(logoutAction());
-  },
-  onGetFilm(id: number) {
-    dispatch(getFilmAction(id));
-  },
-  onAddReview(id: number, {rating, comment} : CommentPost){
-    dispatch(addReviewAction(id, {rating, comment}));
-  },
-});
-
-const connector = connect(mapStateToProps, mapDispatchToProps);
-
+const connector = connect(mapStateToProps);
 type PropsFromRedux = ConnectedProps<typeof connector>;
 
 function App(props: PropsFromRedux): JSX.Element {
-  const {authorizationStatus, isDataLoaded, myFilms, renderedFilmCardsCount, activeFilm, responseStatus, onGetFavoriteFilms, logout, onUpdateFilmCards, onGetFilm, onAddReview} = props;
+  const {authorizationStatus, isDataLoaded} = props;
 
   if (isCheckedAuth(authorizationStatus) || !isDataLoaded) {
     return (
@@ -72,13 +45,13 @@ function App(props: PropsFromRedux): JSX.Element {
         <PrivateRoute
           exact
           path={AppRoute.MyList}
-          render={() => <MyList authorizationStatus = {authorizationStatus} myFilms={myFilms} renderedFilmCardsCount={renderedFilmCardsCount} onGetFavoriteFilms={onGetFavoriteFilms} logout={logout} onUpdateFilmCards={onUpdateFilmCards}/>}
+          render={() => <MyList />}
         >
         </PrivateRoute>
         <PrivateRoute
           exact
           path={AppRoute.ReviewPage}
-          render={() => <ReviewFormPage  authorizationStatus={authorizationStatus} activeFilm={activeFilm} responseStatus={responseStatus} onGetFilm = {onGetFilm} logout = {logout} onAddReview={onAddReview}/>}
+          render={() => <ReviewFormPage />}
         >
         </PrivateRoute>
         <Route exact path={AppRoute.Player}>

@@ -36,6 +36,5 @@ export type FilmServer = {
   'scores_count' : number,
   'run_time' : number,
   'is_favorite' : boolean,
-
 }
 

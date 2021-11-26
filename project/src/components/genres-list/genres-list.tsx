@@ -6,7 +6,7 @@ type GenresListProps= {
   updateGenre: (genre: string) => void;
 }
 
-function GenresList({genres, activeGenre, updateGenre}: GenresListProps): JSX.Element{
+function GenresList({ genres, activeGenre, updateGenre}: GenresListProps): JSX.Element{
 
   return (
     <ul className="catalog__genres-list">

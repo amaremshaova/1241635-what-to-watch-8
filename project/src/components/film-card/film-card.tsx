@@ -3,39 +3,34 @@ import {useHistory} from 'react-router-dom';
 import {Link} from 'react-router-dom';
 import {APIRoute, AppRoute} from '../../const';
 import VideoPlayer from '../video-player/video-player';
-import { useState } from 'react';
-//import VideoPlayer from '../video-player/video-player';
 
 type FilmCardProps = {
   film: Film,
+  activePlayerId: number,
+  onPlayVideo: (id: number) => void;
 }
 
 
-function FilmCard({film}: FilmCardProps): JSX.Element {
-  const [isPlaying, setPlaying] = useState(false);
-  let timer : NodeJS.Timeout;
-
+function FilmCard({film, activePlayerId, onPlayVideo}: FilmCardProps): JSX.Element {
   const onMouseEnter = () => {
-    timer = setTimeout(() => {
-      setPlaying(true);}, 1000);
+    onPlayVideo(film.id);
   };
 
   const onMouseLeave = () => {
-    setPlaying(false);
-    clearTimeout(timer);
+    onPlayVideo(-1);
   };
 
   const history = useHistory();
   return (
-    <article className="small-film-card catalog__films-card" key={film.id} onClick={() => {history.push(`${APIRoute.Film}:${film.id}`); }} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+    <Link className="small-film-card catalog__films-card" key={film.id} to = {`${APIRoute.Film}:${film.id}`} onMouseEnter={()=>onMouseEnter()} onMouseLeave={()=>onMouseLeave()}>
       <div className="small-film-card__image">
-        <VideoPlayer isPlaying={isPlaying} src={film.previewVideoLink} srcPoster={film.previewImage} />
+        <VideoPlayer isPlaying={film.id === activePlayerId} src={film.previewVideoLink} srcPoster={film.previewImage} />
       </div>
       <h3 className="small-film-card__title">
         <Link className="small-film-card__link" to={`${APIRoute.Film}:${film.id}`} onClick={() => history.push(AppRoute.Film)}>{film.name}
         </Link>
       </h3>
-    </article>
+    </Link>
   );
 }
 
