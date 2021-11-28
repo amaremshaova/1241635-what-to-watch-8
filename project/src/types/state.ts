@@ -5,6 +5,7 @@ import { ReviewType } from './review';
 
 export type UserProcess = {
   authorizationStatus: AuthorizationStatus,
+  userAvatar: string
 };
 
 export type FilmData = {
@@ -12,8 +13,8 @@ export type FilmData = {
   favoriteFilms: Film[],
   similarFilms: Film[],
   isDataLoaded: boolean,
-  promoFilm: Film,
-  activeFilm: Film,
+  promoFilm?: Film,
+  activeFilm?: Film,
   reviews: ReviewType[]
 };
 
@@ -21,6 +22,7 @@ export type AppProcess = {
   favoriteFilms: Film[],
   reviews: ReviewType[],
   responseStatus: number,
+  isDataLoaded: boolean,
 }
 
 export type State = RootState;

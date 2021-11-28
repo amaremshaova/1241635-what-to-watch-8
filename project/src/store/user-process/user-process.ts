@@ -5,12 +5,14 @@ import {AuthorizationStatus} from '../../const';
 
 const initialState: UserProcess = {
   authorizationStatus: AuthorizationStatus.Unknown,
+  userAvatar: '',
 };
 
 const userProcess = createReducer(initialState, (builder) => {
   builder
     .addCase(requireAuthorization, (state, action) => {
-      state.authorizationStatus = action.payload;
+      state.authorizationStatus = action.payload.authStatus;
+      state.userAvatar = action.payload.avatarUrl;
     })
     .addCase(requireLogout, (state) => {
       state.authorizationStatus = AuthorizationStatus.NoAuth;

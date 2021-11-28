@@ -7,9 +7,7 @@ type FilmsListProps = {
   renderedFilmCardsCount: number,
 }
 
-
 function FilmsList({films, renderedFilmCardsCount = films.length}: FilmsListProps) :JSX.Element{
-
   const [activePlayerId, setActivePlayer] = useState(0);
 
   return(

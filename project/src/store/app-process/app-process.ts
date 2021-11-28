@@ -6,11 +6,11 @@ const initialState: AppProcess = {
   reviews: [],
   responseStatus: 200,
   favoriteFilms: [],
+  isDataLoaded: false,
 };
 
 const appProcess = createReducer(initialState, (builder) => {
   builder
-
     .addCase(addReview, (state, action) => {
       const {reviews, responseStatus} = action.payload;
       state.reviews = reviews;

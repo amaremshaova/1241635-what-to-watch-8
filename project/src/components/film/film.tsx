@@ -1,41 +1,52 @@
 import { useHistory} from 'react-router-dom';
-import { APIRoute, AuthorizationStatus, CountFilms} from '../../const';
+import { useEffect } from 'react';
+import { APIRoute, AuthorizationStatus, CountFilms, StatusFavoriteFilm} from '../../const';
 import { Link } from 'react-router-dom';
 import Logo from '../logo/logo';
 import Tabs from '../tabs/tabs';
 import Footer from '../footer/footer';
 import UserAccount from '../user-account/user-account';
 import {useDispatch, useSelector} from 'react-redux';
-import { getFilmAction, getReviewsAction, getSimilarFilmsAction, changeFavoriteFilmsAction} from '../../store/api-actions';
+import { fetchFilmAction, fetchReviewsAction, fetchSimilarFilmsAction, changeFavoriteFilmsAction} from '../../store/api-actions';
 import FilmsList from '../films-list/films-list';
-import {updateFilmCards } from '../../store/actions';
 import {getFilm, getSimilarFilms} from '../../store/film-data/selectors';
 import { getAuthorizationStatus } from '../../store/user-process/selectors';
+import LoadingScreen from '../loading-screen/loading-screen';
+import {useParams} from 'react-router';
 
 function Film() :JSX.Element{
-
-  const renderedSimilarCount = CountFilms.MoreLike;
+  const renderedSimilarCount = CountFilms.Similar;
 
   const history = useHistory();
   const dispatch = useDispatch();
 
-
-  const positionFilmId = Number(window.location.pathname.lastIndexOf(':') + 1);
-  const filmId = Number(window.location.pathname.substr(positionFilmId));
-
-  dispatch(getFilmAction(filmId));
-  dispatch(getReviewsAction(filmId));
-  dispatch(getSimilarFilmsAction(filmId));
-  dispatch(updateFilmCards(CountFilms.MoreLike));
+  const {id} = useParams<{id?: string}>();
+  const filmId = Number(id);
 
   const film = useSelector(getFilm);
   const authorizationStatus = useSelector(getAuthorizationStatus);
   const similarFilms = useSelector(getSimilarFilms);
 
-
   const handleChangeFavoriteFilms = () =>{
-    const status = film.isFavorite ? 0 : 1;
-    dispatch(changeFavoriteFilmsAction({id: film.id, status: status}));};
+    if(film){
+      const status = film.isFavorite ? StatusFavoriteFilm.Delete : StatusFavoriteFilm.Add;
+      dispatch(changeFavoriteFilmsAction({id: film.id, status: status}));
+    }
+  };
+
+  const handleRedirect = () => {
+    history.push(APIRoute.Player+film?.id);
+  };
+
+  useEffect(() => {
+    dispatch(fetchFilmAction(filmId));
+    dispatch(fetchReviewsAction(filmId));
+    dispatch(fetchSimilarFilmsAction(filmId));
+  }, [dispatch, filmId, film]);
+
+  if (!film){
+    return <LoadingScreen/>;
+  }
 
   return(
     <div>
@@ -46,7 +57,6 @@ function Film() :JSX.Element{
           </div>
 
           <h1 className="visually-hidden">WTW</h1>
-
           <header className="page-header film-card__head">
             <Logo/>
             <UserAccount />
@@ -61,25 +71,30 @@ function Film() :JSX.Element{
               </p>
 
               <div className="film-card__buttons">
-                <button className="btn btn--play film-card__button" type="button" onClick={()=>history.push(APIRoute.Player+film.id)}>
+                <button className="btn btn--play film-card__button" type="button" onClick={handleRedirect}>
                   <svg viewBox="0 0 19 19" width="19" height="19">
                     <use href="#play-s"></use>
                   </svg>
                   <span>Play</span>
                 </button>
-                <button className="btn btn--list film-card__button" type="button" disabled={(authorizationStatus !== AuthorizationStatus.Auth)} onClick={()=>handleChangeFavoriteFilms()}>
-                  {
-                    film.isFavorite ?
-                      <svg viewBox="0 0 18 14" width="18" height="14">
-                        <use href="#in-list"></use>
-                      </svg> :
-                      <svg viewBox="0 0 19 20" width="19" height="20">
-                        <use href="#add"></use>
-                      </svg>
-                  }
-                  <span>My list</span>
-                </button>
-                <Link to={`${APIRoute.Film}:${film.id}${APIRoute.Review}`} className="btn film-card__button">
+                {authorizationStatus === AuthorizationStatus.Auth ?
+                  <button
+                    className="btn btn--list film-card__button"
+                    type="button"
+                    onClick={handleChangeFavoriteFilms}
+                  >
+                    {
+                      film.isFavorite ?
+                        <svg viewBox="0 0 18 14" width="18" height="14">
+                          <use href="#in-list"></use>
+                        </svg> :
+                        <svg viewBox="0 0 19 20" width="19" height="20">
+                          <use href="#add"></use>
+                        </svg>
+                    }
+                    <span>My list</span>
+                  </button> : ''}
+                <Link to={`${APIRoute.Film}${film.id}${APIRoute.Review}`} className="btn film-card__button" >
                   Add review
                 </Link>
               </div>

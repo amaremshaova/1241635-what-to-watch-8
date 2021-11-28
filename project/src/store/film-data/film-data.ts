@@ -3,33 +3,13 @@ import { FilmData } from '../../types/state';
 import { loadFavoriteFilms, loadFilm, loadSimilarFilms, loadPromoFilm, loadFilms, loadReviews } from '../actions';
 
 
-const initialFilm = {
-  id: 0,
-  name: '',
-  posterImage: '',
-  previewImage: '',
-  backgroundImage: '',
-  backgroundColor: '',
-  videoLink: '',
-  previewVideoLink: '',
-  description: '',
-  rating: 0,
-  scoresCount: 0,
-  director: '',
-  starring: [],
-  runTime: 0,
-  genre: '',
-  released: 0,
-  isFavorite: false,
-};
-
 const initialState: FilmData = {
   films: [],
   favoriteFilms: [],
   similarFilms: [],
-  promoFilm: initialFilm,
+  promoFilm: undefined,
   isDataLoaded: false,
-  activeFilm: initialFilm,
+  activeFilm: undefined,
   reviews: [],
 };
 

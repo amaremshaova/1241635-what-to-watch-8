@@ -17,7 +17,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 
 const api = createAPI(
-  () => store.dispatch(requireAuthorization(AuthorizationStatus.NoAuth)),
+  () => store.dispatch(requireAuthorization(AuthorizationStatus.NoAuth, 'img/avatar.img')),
 );
 
 const store = configureStore({
