@@ -1,36 +1,71 @@
-import { useState, ChangeEvent} from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+
+import { useState, ChangeEvent, useRef, FormEvent, useEffect} from 'react';
+import { useDispatch, useSelector} from 'react-redux';
+import { APIRoute } from '../../const';
 import { useHistory } from 'react-router';
-import { APIRoute} from '../../const';
+
 import { addReviewAction } from '../../store/api-actions';
 import {getResponseStatus} from '../../store/app-process/selectors';
+import { toast } from 'react-toastify';
 
 type ReviewFormProps = {
   id : number;
   backgroundColor: string
 }
 
+const INITIAL_RATING = 0;
+const ERROR_TEXT = 'НЕ УДАЛОСЬ ОТПРАВИТЬ КОММЕНТАРИЙ';
+const STATUS_SUCCESS = 200;
+
 function ReviewForm(props: ReviewFormProps):JSX.Element{
-  const {id, backgroundColor} = props;
+  const {id,backgroundColor} = props;
 
-  const [comment, setComment] = useState({rating: 0, comment: ''});
-  const history = useHistory();
+  const [comment, setComment] = useState({rating: INITIAL_RATING, comment: ''});
+  const [isDisabled, setIsDisabled] = useState(false);
   const dispatch = useDispatch();
+  const history = useHistory();
 
+  const commentRef = useRef<HTMLTextAreaElement | null>(null);
+  const formRef = useRef<HTMLFormElement | null> (null);
   const responseStatus = useSelector(getResponseStatus);
+
+  const handleSubmit = async (evt: FormEvent) => {
+    evt.preventDefault();
+    setIsDisabled(true);
+    dispatch(addReviewAction(id, comment));
+  };
+
+  const handleResponse = () =>{
+    setIsDisabled(false);
+    if (responseStatus === STATUS_SUCCESS) {
+      history.push(APIRoute.Film+id);
+    }
+  };
+
+  useEffect(() =>{
+    if (responseStatus !== 200){
+      toast.info(ERROR_TEXT);
+    }
+  }, [responseStatus]);
 
   return (
     <div className="add-review">
-      <form action="#" className="add-review__form" onSubmit= {() => {dispatch(addReviewAction(id, comment));  history.push(APIRoute.Film+id);} } >
-        <fieldset className="rating" disabled={responseStatus !== 200} style={{border:'0 none'}}>
+      <form action="#" className="add-review__form"
+        ref = {formRef}
+        onSubmit= {(evt) => {
+          handleSubmit(evt).then(handleResponse);}}
+      >
+        <fieldset className="rating" disabled={isDisabled}
+          style={{border:'0 none'}}
+        >
           <div className="rating__stars">
-            <input className="rating__input" id="star-10" type="radio" name="rating" value="10" checked  onChange={()=>setComment({...comment, rating: 10})}/>
+            <input className="rating__input" id="star-10" type="radio" name="rating" value="10" onChange={()=>setComment({...comment, rating: 10})}/>
             <label className="rating__label" htmlFor="star-10">Rating 10</label>
 
             <input className="rating__input" id="star-9" type="radio" name="rating" value="9" onChange={()=>setComment({...comment, rating: 9})}/>
             <label className="rating__label" htmlFor="star-9">Rating 9</label>
 
-            <input className="rating__input" id="star-8" type="radio" name="rating" value="8" checked onChange={()=>setComment({...comment, rating: 8})}/>
+            <input className="rating__input" id="star-8" type="radio" name="rating" value="8" onChange={()=>setComment({...comment, rating: 8})}/>
             <label className="rating__label" htmlFor="star-8">Rating 8</label>
 
             <input className="rating__input" id="star-7" type="radio" name="rating" value="7" onChange={()=>setComment({...comment, rating: 7})}/>
@@ -56,10 +91,27 @@ function ReviewForm(props: ReviewFormProps):JSX.Element{
           </div>
         </fieldset>
 
-        <fieldset className="add-review__text" style={{backgroundColor: backgroundColor}}>
-          <textarea className="add-review__textarea" maxLength={400} name="review-text" id="review-text" placeholder="Review text" onChange={({target}: ChangeEvent<HTMLTextAreaElement>)=>setComment({...comment, comment: target.value})}></textarea>
+        <fieldset
+          className="add-review__text"
+          style={{backgroundColor: backgroundColor}}
+          disabled={isDisabled}
+        >
+          <textarea className="add-review__textarea"
+            maxLength={400}
+            ref = {commentRef}
+            name="review-text"
+            id="review-text"
+            placeholder="Review text"
+            onChange={({target}: ChangeEvent<HTMLTextAreaElement>)=>setComment({...comment, comment: target.value})}
+          >
+          </textarea>
           <div className="add-review__submit">
-            <button className="add-review__btn" type="submit" disabled = {!!((comment.comment.length < 50 || comment.rating === 0))}>Post</button>
+            <button
+              className="add-review__btn"
+              type="submit"
+              disabled = {(comment.comment.length < 50 || comment.rating === 0 )}
+            >Post
+            </button>
           </div>
         </fieldset>
       </form>

@@ -2,10 +2,9 @@ import Logo from '../logo/logo';
 import {useRef, FormEvent, useState} from 'react';
 import {useHistory} from 'react-router-dom';
 import {loginAction} from '../../store/api-actions';
-import {AppRoute} from '../../const';
+import {PatternSignIn} from '../../const';
 import Footer from '../footer/footer';
 import { useDispatch } from 'react-redux';
-
 
 function AuthScreen(): JSX.Element {
   const dispatch = useDispatch();
@@ -18,9 +17,9 @@ function AuthScreen(): JSX.Element {
 
   const history = useHistory();
 
-  const checkLogin = () => {
-    const loginPattern = /^[^ ]+@[^ ]+\.[a-z]{2,3}$/;
-    if (loginRef.current === null || !loginRef.current.value.match(loginPattern)){
+  const handleCheckLogin = () => {
+
+    if (loginRef.current === null || !loginRef.current.value.match(PatternSignIn.Login)){
       setErrorLogin(true);
     }
     else {
@@ -28,9 +27,9 @@ function AuthScreen(): JSX.Element {
     }
   };
 
-  const checkPassword = () => {
-    const passPattern = /(?=.*\d)(?=.*[a-zA-z])/;
-    if (passwordRef.current === null || !passwordRef.current.value.match(passPattern)){
+  const handleCheckPassword = () => {
+
+    if (passwordRef.current === null || !passwordRef.current.value.match(PatternSignIn.Password)){
       setErrorPassword(true);
     }
     else{
@@ -41,16 +40,17 @@ function AuthScreen(): JSX.Element {
   const handleSubmit = (evt: FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
 
-    if ((loginRef.current !== null && !loginError && loginRef.current.value !== '') && (passwordRef.current !== null && !passwordError && passwordRef.current.value !== '')) {
+    if ((loginRef.current !== null && !loginError && loginRef.current.value !== '')
+    && (passwordRef.current !== null && !passwordError && passwordRef.current.value !== '')) {
       dispatch(loginAction({
         email: loginRef.current.value,
         password: passwordRef.current.value,
       }));
-      history.push(AppRoute.Main);
+      history.goBack();
     }
   };
 
-  const getErrorMessage = () => {
+  const handleGetErrorMessage = () => {
     if (loginError && passwordError){
       return <p>Please enter a valid email address and password</p>;
     }
@@ -72,14 +72,28 @@ function AuthScreen(): JSX.Element {
 
       <div className="sign-in user-page__content">
         <form action="#" className="sign-in__form" onSubmit={(evt) =>handleSubmit(evt)}>
-          { (loginError || passwordError) ? <div className="sign-in__message">{getErrorMessage()} </div> : ''}
+          { (loginError || passwordError) ?
+            <div className="sign-in__message">{handleGetErrorMessage()} </div> : ''}
           <div className="sign-in__fields">
             <div className={`sign-in__field ${loginError ? 'sign-in__field--error' : ''}`} >
-              <input  ref={loginRef} className="sign-in__input" type="email" placeholder="Email address" name="user-email" id="user-email"  onChange={()=>{checkLogin();}}/>
+              <input  ref={loginRef} className="sign-in__input"
+                type="email"
+                placeholder="Email address"
+                name="user-email" id="user-email"
+                onKeyUp={()=>{handleCheckLogin();}}
+              />
               <label className="sign-in__label visually-hidden" htmlFor="user-email">Email address</label>
             </div>
             <div className={`sign-in__field ${passwordError ? 'sign-in__field--error' : ''}`}>
-              <input   ref={passwordRef} className="sign-in__input" type="password" placeholder="Password" name="user-password" id="user-password" onChange={()=>{checkPassword();}}/>
+              <input
+                ref={passwordRef}
+                className="sign-in__input"
+                type="password"
+                placeholder="Password"
+                name="user-password"
+                id="user-password"
+                onChange={()=>{handleCheckPassword();}}
+              />
               <label className="sign-in__label visually-hidden" htmlFor="user-password">Password</label>
             </div>
           </div>

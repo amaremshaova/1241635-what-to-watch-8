@@ -13,7 +13,7 @@ function Review({review}: ReviewProps):JSX.Element{
 
         <footer className="review__details">
           <cite className="review__author">{review.user.name}</cite>
-          <time className="review__date" dateTime="2016-12-24">{moment(review.date).format('LL')}</time>
+          <time className="review__date" dateTime={moment(review.date).format('YYYY-MM-DD')}>{moment(review.date).format('LL')}</time>
         </footer>
       </blockquote>
 

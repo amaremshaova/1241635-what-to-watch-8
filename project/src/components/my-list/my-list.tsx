@@ -3,8 +3,7 @@ import UserAccount from '../user-account/user-account';
 import {useDispatch, useSelector} from 'react-redux';
 import FilmsList from '../films-list/films-list';
 import Footer from '../footer/footer';
-import { getFavoriteFilmsAction} from '../../store/api-actions';
-import { updateFilmCards } from '../../store/actions';
+import { fetchFavoriteFilmsAction} from '../../store/api-actions';
 import {getFavoriteFilms} from '../../store/film-data/selectors';
 
 function MyList(): JSX.Element {
@@ -12,8 +11,7 @@ function MyList(): JSX.Element {
   const films = useSelector(getFavoriteFilms);
   const dispatch = useDispatch();
 
-  dispatch(getFavoriteFilmsAction());
-  dispatch(updateFilmCards(films.length));
+  dispatch(fetchFavoriteFilmsAction());
 
   return(
     <div className="user-page">

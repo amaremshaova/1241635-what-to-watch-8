@@ -12,24 +12,22 @@ function VideoPlayer({isPlaying, src, srcPoster}: VideoPlayerProps): JSX.Element
 
   useEffect(() => {
 
-    let timer;
+    let timer: ReturnType<typeof setTimeout>;
     if (videoRef.current === null) {
       return;
     }
 
-    if (isPlaying) {
+    if (videoRef.current && isPlaying) {
       timer = setTimeout(()=>videoRef.current?.play(), 1000);
-
-      return;
     }
 
-    videoRef.current.pause();
-    clearTimeout(timer);
-  }, [isPlaying]);
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [isPlaying, videoRef]);
 
 
   return (
-
     <div>
       <video
         src={isPlaying ? src : ''}
@@ -38,7 +36,6 @@ function VideoPlayer({isPlaying, src, srcPoster}: VideoPlayerProps): JSX.Element
         poster={isPlaying ? '' : srcPoster}
         muted
       >
-
       </video>
     </div>
   );

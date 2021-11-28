@@ -16,7 +16,7 @@ export enum AuthorizationStatus {
 
 export enum CountFilms{
   Catalog = 8,
-  MoreLike = 4,
+  Similar = 4,
 }
 
 export enum APIRoute {
@@ -28,7 +28,7 @@ export enum APIRoute {
   Similar = '/similar',
   FavoriteFilms = '/favorite/',
   PromoFilm = '/promo',
-  Player = '/player/:'
+  Player = '/player/'
 }
 
 export enum TabValues{
@@ -36,5 +36,16 @@ export enum TabValues{
   Details = 'Details',
   Review = 'Review'
 }
+
+export enum StatusFavoriteFilm{
+  Delete = 0,
+  Add = 1
+}
+
+export const PatternSignIn = {
+  Login : /^[^ ]+@[^ ]+\.[a-z]{2,3}$/,
+  Password : /(?=.*\d)(?=.*[a-zA-z])/,
+};
+
 export const isCheckedAuth = (authorizationStatus: AuthorizationStatus): boolean =>
   authorizationStatus === AuthorizationStatus.Unknown;

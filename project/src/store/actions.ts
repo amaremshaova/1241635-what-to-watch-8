@@ -7,12 +7,10 @@ import {createAction} from '@reduxjs/toolkit';
 
 export const requireAuthorization = createAction(
   ActionType.RequireAuthorization,
-  (authStatus: AuthorizationStatus) => ({
-    payload: authStatus,
+  (authStatus: AuthorizationStatus, avatarUrl: string) => ({
+    payload: {authStatus, avatarUrl},
   }),
 );
-
-export const requireLogout = createAction(ActionType.RequireLogout);
 
 export const loadFilms = createAction(
   ActionType.LoadFilms,
@@ -22,7 +20,7 @@ export const loadFilms = createAction(
 );
 
 export const loadFilm = createAction(
-  ActionType.GetFilm,
+  ActionType.LoadFilm,
   (film: Film) => ({
     payload: film,
   }),
@@ -36,28 +34,28 @@ export const addFavoriteFilm = createAction(
 );
 
 export const loadPromoFilm = createAction(
-  ActionType.GetPromoFilm,
+  ActionType.LoadPromoFilm,
   (promoFilm: Film) => ({
     payload: promoFilm,
   }),
 );
 
 export const loadSimilarFilms  = createAction(
-  ActionType.GetSimilarFilms,
+  ActionType.LoadSimilarFilms,
   (similarFilms: Film[]) => ({
     payload: similarFilms,
   }),
 );
 
 export const loadFavoriteFilms = createAction(
-  ActionType.GetFavoriteFilms,
+  ActionType.LoadFavoriteFilms,
   (favoriteFilms: Film[]) => ({
     payload: favoriteFilms,
   }),
 );
 
 export const loadReviews = createAction(
-  ActionType.GetReviews,
+  ActionType.LoadReviews,
   (reviews: ReviewType[]) => ({
     payload: reviews,
   }),
@@ -66,21 +64,9 @@ export const loadReviews = createAction(
 export const addReview = createAction(
   ActionType.AddReview,
   (reviews: ReviewType[], responseStatus: number) => ({
-    payload: {reviews, responseStatus},
+    payload: {reviews: reviews, responseStatus: responseStatus},
   }),
 );
-
-
-export const updateFilmCards = createAction(
-  ActionType.UpdateGenre,
-  (renderedFilmCardsCount: number) => ({
-    payload: renderedFilmCardsCount,
-  }),
-);
-
-export const startLoading = () => ({
-  type: ActionType.StartLoading,
-} as const);
 
 export const redirectToRoute = createAction(
   ActionType.RedirectToRoute,
@@ -89,3 +75,4 @@ export const redirectToRoute = createAction(
   }),
 );
 
+export const requireLogout = createAction(ActionType.RequireLogout);

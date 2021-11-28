@@ -45,13 +45,13 @@ function App(props: PropsFromRedux): JSX.Element {
         <PrivateRoute
           exact
           path={AppRoute.MyList}
-          render={() => <MyList />}
+          onRender={() => <MyList />}
         >
         </PrivateRoute>
         <PrivateRoute
           exact
           path={AppRoute.ReviewPage}
-          render={() => <ReviewFormPage />}
+          onRender={() => <ReviewFormPage />}
         >
         </PrivateRoute>
         <Route exact path={AppRoute.Player}>
