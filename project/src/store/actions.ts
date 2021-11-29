@@ -1,5 +1,5 @@
 import {ActionType} from '../types/action';
-import { AppRoute, AuthorizationStatus } from '../const';
+import {  AuthorizationStatus } from '../const';
 import { Film } from '../types/films';
 import { ReviewType } from '../types/review';
 import {createAction} from '@reduxjs/toolkit';
@@ -65,13 +65,6 @@ export const addReview = createAction(
   ActionType.AddReview,
   (reviews: ReviewType[], responseStatus: number) => ({
     payload: {reviews: reviews, responseStatus: responseStatus},
-  }),
-);
-
-export const redirectToRoute = createAction(
-  ActionType.RedirectToRoute,
-  (url: AppRoute) => ({
-    payload: url,
   }),
 );
 

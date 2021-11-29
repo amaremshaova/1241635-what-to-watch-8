@@ -1,4 +1,7 @@
 
+export const STATUS_SUCCESS = 200;
+export const USER_AVATAR = 'img/avatar.jpg';
+
 export enum AppRoute {
   Login = '/login',
   MyList = '/mylist',

@@ -22,7 +22,6 @@ export type AppProcess = {
   favoriteFilms: Film[],
   reviews: ReviewType[],
   responseStatus: number,
-  isDataLoaded: boolean,
 }
 
 export type State = RootState;

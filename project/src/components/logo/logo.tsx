@@ -5,9 +5,6 @@ import { useHistory } from 'react-router';
 function Logo(): JSX.Element{
   const history = useHistory();
 
-  // eslint-disable-next-line no-console
-  console.log();
-
   return(
     <div className="logo">
       {history.location.pathname === '/' ?

@@ -24,11 +24,9 @@ const filmData = createReducer(initialState, (builder) => {
     })
     .addCase(loadFavoriteFilms, (state, action) => {
       state.favoriteFilms = action.payload;
-      state.isDataLoaded = true;
     })
     .addCase(loadSimilarFilms, (state, action) => {
       state.similarFilms = action.payload;
-      state.isDataLoaded = true;
     })
     .addCase(loadPromoFilm, (state, action) => {
       state.promoFilm = action.payload;

@@ -1,4 +1,4 @@
-import {Switch, Route, BrowserRouter} from 'react-router-dom';
+import {Switch, Route} from 'react-router-dom';
 import MainScreen from '../main-screen/main-screen';
 import SignIn from '../sign-in/sign-in';
 import Player from '../player/player';
@@ -31,37 +31,35 @@ function App(props: PropsFromRedux): JSX.Element {
   }
 
   return (
-    <BrowserRouter>
-      <Switch>
-        <Route exact path={AppRoute.Main}>
-          <MainScreen />
-        </Route>
-        <Route exact path={AppRoute.Login}>
-          <SignIn />
-        </Route>
-        <Route exact path={AppRoute.Film}>
-          <Film/>
-        </Route>
-        <PrivateRoute
-          exact
-          path={AppRoute.MyList}
-          onRender={() => <MyList />}
-        >
-        </PrivateRoute>
-        <PrivateRoute
-          exact
-          path={AppRoute.ReviewPage}
-          onRender={() => <ReviewFormPage />}
-        >
-        </PrivateRoute>
-        <Route exact path={AppRoute.Player}>
-          <Player />
-        </Route>
-        <Route>
-          <NotFoundPage/>
-        </Route>
-      </Switch>
-    </BrowserRouter>
+    <Switch>
+      <Route exact path={AppRoute.Main}>
+        <MainScreen />
+      </Route>
+      <Route exact path={AppRoute.Login}>
+        <SignIn />
+      </Route>
+      <Route exact path={AppRoute.Film}>
+        <Film/>
+      </Route>
+      <PrivateRoute
+        exact
+        path={AppRoute.MyList}
+        onRender={() => <MyList />}
+      >
+      </PrivateRoute>
+      <PrivateRoute
+        exact
+        path={AppRoute.ReviewPage}
+        onRender={() => <ReviewFormPage />}
+      >
+      </PrivateRoute>
+      <Route exact path={AppRoute.Player}>
+        <Player />
+      </Route>
+      <Route>
+        <NotFoundPage/>
+      </Route>
+    </Switch>
   );
 }
 

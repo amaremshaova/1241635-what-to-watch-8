@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { AuthorizationStatus } from '../../const';
+import { AuthorizationStatus, USER_AVATAR } from '../../const';
 import { getAuthorizationStatus } from '../../store/user-process/selectors';
 import { checkAuthAction, logoutAction } from '../../store/api-actions';
 import { AppRoute } from '../../const';
@@ -38,7 +38,7 @@ function UserAccount():JSX.Element{
     <ul className="user-block">
       <li className="user-block__item">
         <div className="user-block__avatar" onClick={handleRedirectMyList}>
-          <img src={authorizationStatus === AuthorizationStatus.Auth ? avatar : 'img/avatar.jpg'} alt="User avatar" width="63" height="63" />
+          <img src={authorizationStatus === AuthorizationStatus.Auth ? avatar : USER_AVATAR} alt="User avatar" width="63" height="63" />
         </div>
       </li>
       <li className="user-block__item" >

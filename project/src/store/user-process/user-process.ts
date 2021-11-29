@@ -1,11 +1,11 @@
 import {createReducer} from '@reduxjs/toolkit';
 import {requireAuthorization, requireLogout} from '../actions';
 import {UserProcess} from '../../types/state';
-import {AuthorizationStatus} from '../../const';
+import {AuthorizationStatus, USER_AVATAR} from '../../const';
 
 const initialState: UserProcess = {
   authorizationStatus: AuthorizationStatus.Unknown,
-  userAvatar: '',
+  userAvatar: USER_AVATAR,
 };
 
 const userProcess = createReducer(initialState, (builder) => {

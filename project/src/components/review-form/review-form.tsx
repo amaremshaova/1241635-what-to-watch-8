@@ -1,7 +1,7 @@
 
 import { useState, ChangeEvent, useRef, FormEvent, useEffect} from 'react';
 import { useDispatch, useSelector} from 'react-redux';
-import { APIRoute } from '../../const';
+import { APIRoute, STATUS_SUCCESS } from '../../const';
 import { useHistory } from 'react-router';
 
 import { addReviewAction } from '../../store/api-actions';
@@ -15,7 +15,6 @@ type ReviewFormProps = {
 
 const INITIAL_RATING = 0;
 const ERROR_TEXT = 'НЕ УДАЛОСЬ ОТПРАВИТЬ КОММЕНТАРИЙ';
-const STATUS_SUCCESS = 200;
 
 function ReviewForm(props: ReviewFormProps):JSX.Element{
   const {id,backgroundColor} = props;
@@ -43,7 +42,7 @@ function ReviewForm(props: ReviewFormProps):JSX.Element{
   };
 
   useEffect(() =>{
-    if (responseStatus !== 200){
+    if (responseStatus !== STATUS_SUCCESS){
       toast.info(ERROR_TEXT);
     }
   }, [responseStatus]);

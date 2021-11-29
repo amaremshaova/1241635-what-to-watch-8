@@ -1,7 +1,7 @@
 import {ThunkActionResult} from '../types/action';
 import {loadFilms, loadFilm, requireAuthorization, requireLogout, loadReviews, loadSimilarFilms, loadFavoriteFilms, addFavoriteFilm, addReview} from './actions';
 import {saveToken, dropToken} from '../services/token';
-import {APIRoute, AuthorizationStatus} from '../const';
+import {APIRoute, AuthorizationStatus, USER_AVATAR} from '../const';
 import {FilmServer} from '../types/films';
 import {UserData} from '../types/user-data';
 import {adaptToClient} from '../adapter';
@@ -65,7 +65,7 @@ export const checkAuthAction = (): ThunkActionResult =>
   async (dispatch, _getState, api) => {
     const {data} = await api.get(APIRoute.Login);
     if (!data){
-      dispatch(requireAuthorization(AuthorizationStatus.NoAuth, 'img/avatar.jpg'));
+      dispatch(requireAuthorization(AuthorizationStatus.NoAuth, USER_AVATAR));
     }
     else {
       dispatch(requireAuthorization(AuthorizationStatus.Auth, data['avatar_url']));

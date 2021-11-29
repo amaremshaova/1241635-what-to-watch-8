@@ -1,12 +1,12 @@
 import {createReducer} from '@reduxjs/toolkit';
+import { STATUS_SUCCESS } from '../../const';
 import { AppProcess} from '../../types/state';
 import { addReview, addFavoriteFilm} from '../actions';
 
 const initialState: AppProcess = {
   reviews: [],
-  responseStatus: 200,
+  responseStatus: STATUS_SUCCESS,
   favoriteFilms: [],
-  isDataLoaded: false,
 };
 
 const appProcess = createReducer(initialState, (builder) => {
